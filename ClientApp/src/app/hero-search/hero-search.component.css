@@ -1,0 +1,134 @@
+/* HeroSearch private styles */
+
+#search-component {
+  margin-left: 6em;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  margin-bottom: .5rem;
+}
+
+input[type=search] {
+  padding: .5rem;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  display: block;
+  border-radius: 4px;
+}
+
+  input[type=search]:focus {
+    outline: #336699 auto 1px;
+  }
+
+/*.search-result li a {
+  border-bottom: 1px solid gray;
+  border-left: 1px solid gray;
+  border-right: 1px solid gray;
+  display: inline-block;
+  width: 100%;
+  max-width: 600px;
+  padding: .5rem;
+  box-sizing: border-box;
+  text-decoration: none;
+  color: black;
+}
+
+  .search-result li a:hover {
+    background-color: #435A60;
+    color: white;
+  }*/
+
+ul.search-result {
+  margin-top: 3em;
+}
+
+.search-result li {
+  display: flex;
+  /*margin: 0 0 2em 0;*/
+  list-style-type: none;
+  padding: 0;
+  max-width: 530px;
+}
+
+.search-result .hero,
+.search-result button {
+  flex: 1;
+  cursor: pointer;
+  position: relative;
+  left: 0;
+  background-color: #EEE;
+  margin: .5em;
+  padding: 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: stretch;
+  height: 1.8em;
+  min-height: 35px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: none;
+}
+
+  .search-result li button:hover {
+    color: #2c3a41;
+    background-color: #e6e6e6;
+  }
+
+  .search-result li button:active {
+    background-color: #525252;
+    color: #fafafa;
+  }
+
+  .search-result li button.selected {
+    background-color: black;
+    color: white;
+  }
+
+    .search-result li button.selected:hover {
+      background-color: #505050;
+      color: white;
+    }
+
+    .search-result li button.selected:active {
+      background-color: black;
+      color: white;
+    }
+
+.search-result div.hero {
+  cursor: auto;
+}
+
+.search-result input {
+  background-color: #eee;
+  border: none;
+  width: 100%;
+  height: 1.8em;
+  font-size: 1.2em;
+}
+
+  .search-result input:focus,
+  .search-result input:active {
+    outline: none;
+    background-color: #e6e6e6;
+  }
+
+.search-result .badge {
+  display: inline-block;
+  font-size: small;
+  color: var(--toggle-color);
+  padding: 0.8em 0.7em 0 0.7em;
+  background-color: var(--primary-color);
+  line-height: 1em;
+  margin-right: .8em;
+  border-radius: 4px 0 0 4px;
+  min-width: 35px;
+  min-height: 35px;
+}
+
+.search-result .name {
+  align-self: center;
+}

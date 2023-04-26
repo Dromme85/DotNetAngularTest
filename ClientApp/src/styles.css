@@ -1,0 +1,79 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --body-color: #e4e9f7;
+  --sidebar-color: #fff;
+  --primary-color: #695cfe;
+  --primary-color-hover: #3d31cc;
+  --primary-color-light: #f6f5ff;
+  --toggle-color: #ddd;
+  --text-color: #707070;
+  --text-link-color: #707070;
+
+  /* TreeGrid Colors*/
+  --tree-bg-color: #fff;
+  --hidden-tree-color: #00640010;
+
+  /* Transition */
+  --tran-02: all 0.2s ease;
+  --tran-03: all 0.3s ease;
+  --tran-04: all 0.4s ease;
+  --tran-05: all 0.5s ease;
+}
+
+body:has(.main-body.dark) {
+  --body-color: #707070;
+  --sidebar-color: #242526;
+  --primary-color: #3a3b3c;
+  --primary-color-light: #3a3b3c;
+  --toggle-color: #fff;
+  --text-color: #e6e6e6;
+  --text-link-color: #707070;
+  --tree-bg-color: #ddd;
+  --hidden-tree-color: #00640020;
+}
+
+nav {
+  transition: var(--tran-04)
+}
+
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+code {
+  color: #e01a76;
+}
+
+
+body, .main-body {
+  height: 100vh;
+  background: var(--body-color);
+  margin-left: 50px;
+}
+
+  body:has(.main-body.dark) {
+    /*background: #707070;*/
+    background: var(--body-color);
+  }
+
+.btn-primary {
+  color: #fff;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color-hover);
+  /*color: var(--text-color);*/
+}
+
+/* Override of BS container */
+.container {
+  max-width: calc(100vw - 116px);
+}

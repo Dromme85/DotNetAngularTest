@@ -1,0 +1,15 @@
+<div id="search-component" class="pt-4">
+  <label for="search-box">Hero Search</label>
+  <input #searchBox id="search-box" type="search" (ngModelChange)="search(searchBox.value)" [(ngModel)]="query" autofocus />
+
+  <div *ngIf="(heroes$ | async) as list">
+    <ul class="search-result">
+      <li *ngFor="let hero of list">
+        <button type="button" class="hero" routerLink="/detail/{{hero.id}}">
+          <span class="badge">{{hero.id}}</span>
+          <span class="name">{{hero.name}}</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

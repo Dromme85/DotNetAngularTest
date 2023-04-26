@@ -1,0 +1,130 @@
+/* HeroesComponent's private CSS styles */
+.heroes {
+  margin: 0 0 2em 0;
+  list-style-type: none;
+  padding: 0;
+}
+
+  .heroes li {
+    display: flex;
+  }
+
+  .heroes .hero,
+  .heroes button {
+    flex: 1;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    margin: .5em;
+    padding: 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: stretch;
+    height: 1.8em;
+    min-height: 35px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+    .heroes button:hover {
+      color: #2c3a41;
+      background-color: #e6e6e6;
+    }
+
+    .heroes button:active {
+      background-color: #525252;
+      color: #fafafa;
+    }
+
+    .heroes button.selected {
+      background-color: black;
+      color: white;
+    }
+
+      .heroes button.selected:hover {
+        background-color: #505050;
+        color: white;
+      }
+
+      .heroes button.selected:active {
+        background-color: black;
+        color: white;
+      }
+
+    .heroes .add-button {
+      cursor: pointer;
+    }
+
+    .heroes div.hero {
+      cursor: auto;
+    }
+
+    .heroes input {
+      background-color: #eee;
+      border: none;
+      width: 100%;
+      height: 1.8em;
+      font-size: 1.2em;
+    }
+
+      .heroes input:focus,
+      .heroes input:active {
+        outline: none;
+        background-color: #e6e6e6;
+      }
+
+  .heroes .badge {
+    display: inline-block;
+    font-size: small;
+    color: var(--toggle-color);
+    padding: 0.8em 0.7em 0 0.7em;
+    background-color: var(--primary-color);
+    line-height: 1em;
+    margin-right: .8em;
+    border-radius: 4px 0 0 4px;
+    min-width: 35px;
+    min-height: 35px;
+  }
+
+  .heroes button.delete {
+    display: inline-block;
+    font-size: 1.2rem;
+    background-color: #a33127;
+    color: var(--sidebar-color);
+    border-radius: 0 4px 4px 0;
+    margin: .5em;
+    margin-left: -10px;
+    max-width: 35px;
+    min-height: 35px;
+  }
+
+    .heroes button.delete:hover {
+      background-color: #611d17;
+      left: 0;
+    }
+
+  .heroes button.delete span {
+    display: flex;
+    font-size: larger;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .heroes .name {
+    align-self: center;
+  }
+
+.hero-detail {
+  position: fixed;
+  top: 10em;
+  right: -2px;
+  /*border: 1px solid gray;*/
+  border-radius: 4px;
+  padding: 1em;
+  background-color: var(--sidebar-color);
+  /*box-shadow: gray 5px -5px inset;*/
+}
+
+.hero-detail .hero-detail-title {
+  color: white !important; /*var(--toggle-color);*/
+}

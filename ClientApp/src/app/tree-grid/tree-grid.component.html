@@ -1,0 +1,128 @@
+<div class="forest">
+  <table style="font-size: calc(100vh / ({{rowLength}} * {{gridSize}}))">
+    <tr *ngFor="let index of gridRows" class="tree-grid">
+      <td *ngFor="let tree of index" class="cell">
+        <div class="cell-content" [ngClass]="{ 'high-score-border': tree.highscore, 'selected-border': tree.selected }" (click)="selectTree(tree)">
+          <div><i [ngClass]="{ hidden: !tree.visible }" class="fa-solid fa-tree" style="font-size: calc(.4em * ({{tree.data}} / 2))"></i></div>
+          <div *ngIf="debug">
+            <div class="data-text">{{tree.data}}</div>
+            <div *ngIf="tree.scenicScore" class="data-score">{{tree.scenicScore}}</div>
+          </div>
+        </div>
+        <div *ngIf="tree.selected" style="pointer-events: none;">
+          <div *ngIf="tree.scores[3]" style="position: fixed; transform: translate(0.5em, -2.9em);">
+            <i class="fa-solid fa-chevron-up" style="color: #33333333;"></i>
+            <div *ngFor="let i of makeArray(tree.scores[3]-1)" style="transform: translate(0em, calc(-3.6666em * {{i}}));">
+              <i style="color: #33333333;" class="fa-solid fa-chevron-up"></i>
+            </div>
+          </div>
+          <div *ngIf="tree.scores[2]" style="position: fixed; transform: translate(1.8em, -1.8em);">
+            <i class="fa-solid fa-chevron-right" style="color: #33333333;"></i>
+            <div *ngFor="let i of makeArray(tree.scores[2]-1)" style="transform: translate(calc(2.1666em * {{i}}), calc(-1.5em * {{i}}));">
+              <i style="color: #33333333;" class="fa-solid fa-chevron-right"></i>
+            </div>
+          </div>
+          <div *ngIf="tree.scores[1]" style="position: fixed; transform: translate(0.5em, -0.6em);">
+            <i class="fa-solid fa-chevron-down" style="color: #33333333;"></i>
+            <div *ngFor="let i of makeArray(tree.scores[1]-1)" style="transform: translate(0em, calc(0.6666em * {{i}}));">
+              <i style="color: #33333333;" class="fa-solid fa-chevron-down"></i>
+            </div>
+          </div>
+          <div *ngIf="tree.scores[0]" style="position: fixed; transform: translate(-0.4em, -1.8em);">
+            <i class="fa-solid fa-chevron-left" style="color: #33333333;"></i>
+            <div *ngFor="let i of makeArray(tree.scores[0]-1)" style="transform: translate(calc(-2.1666em * {{i}}), calc(-1.5em * {{i}}));">
+              <i style="color: #33333333;" class="fa-solid fa-chevron-left"></i>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div class="info">
+    <div class="info-box" [ngClass]="{ closed: !isLegendClosed }">
+      <div class="legend"><b>Legend</b><i class="fa fa-chevron-up toggle" (click)="toggleLegend()"></i></div>
+      <div [ngClass]="{ 'legend-closed': isLegendClosed }">
+        <div class="d-flex">
+          <div class="cell-preview">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Simple Tree</div>
+        </div>
+        <div class="d-flex">
+          <div class="cell-preview hover">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Mouse Over</div>
+        </div>
+        <div class="d-flex">
+          <div class="cell-preview high-score-border">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Highest Score</div>
+        </div>
+        <div class="d-flex">
+          <div class="cell-preview selected-border">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Selected Tree</div>
+        </div>
+        <div class="d-flex">
+          <div class="cell-preview high-score-selected">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Selected Highest</div>
+        </div>
+        <div class="d-flex">
+          <div class="cell-preview hidden">
+            <i class="fa-solid fa-tree" style="font-size: 1rem"></i>
+          </div>
+          <div class="cell-preview-text">Hidden Tree</div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selectedTree" class="info-box">
+      <div><b>Tree Height</b>: {{selectedTree.data}}</div>
+      <div><b>Scenic Score</b>: {{selectedTree.scenicScore || "-"}}</div>
+      <div *ngIf="selectedTree.scenicScore > 0" class="small ms-2 d-flex">
+        <div>
+          North <br />
+          East <br />
+          South <br />
+          West
+        </div>
+        <div class="ms-2">
+          - {{selectedTree.scores[3]}}<br />
+          - {{selectedTree.scores[2]}}<br />
+          - {{selectedTree.scores[1]}}<br />
+          - {{selectedTree.scores[0]}}
+        </div>
+      </div>
+      <div><b>Tree Visible</b>: {{selectedTree.visible ? "Yes" : "No"}}</div>
+      <div *ngIf="selectedTree.visible" class="small ms-2 d-flex">
+        <div>
+          North <br />
+          East <br />
+          South <br />
+          West
+        </div>
+        <div class="ms-2">
+          - {{selectedTree.direction[3] ? "Yes" : "No"}}<br />
+          - {{selectedTree.direction[2] ? "Yes" : "No"}}<br />
+          - {{selectedTree.direction[1] ? "Yes" : "No"}}<br />
+          - {{selectedTree.direction[0] ? "Yes" : "No"}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="regen-btn">
+    <div class="zoom-input">
+      <div class="zoom-input-group">
+        <div><i class="fa-solid fa-plus"></i></div>
+        <input type="range" class="form-range mx-2" id="grid-size" [(ngModel)]="gridSize" value="{{gridSize}}" min="1" max="10" step="0.1" />
+        <div><i class="fa-solid fa-minus"></i></div>
+      </div>
+    </div>
+    <div class="text-end"><button type="reset" class="btn btn-sm btn-primary" (click)="regenForest()">Generate new forest</button></div>
+    <div class="text-end mt-1"><button type="reset" class="btn btn-sm btn-primary" (click)="loadForest('treegrid.txt')">Load forest</button></div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+.cc-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.cc-main h1,
+.cc-main h2{
+  text-align: center;
+  color: var(--text-color);
+}
+
+.cc-main h2 pre.saved-card {
+  border: 2px solid black;
+  background: white;
+  color: black;
+  padding: 4px;
+  margin-top: 2rem;
+}
+
+  .cc-main input:focus {
+    outline: none !important;
+    border: none;
+  }
+
+  .cc-main ul {
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .cc-main ul li {
+    margin-bottom: .5rem;
+  }
+  .cc-main ul li pre {
+    margin-bottom: 0;
+  }

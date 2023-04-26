@@ -1,0 +1,14 @@
+<div class="pt-4">
+  <h1>Charts</h1>
+  <div class="d-flex flex-wrap">
+    <google-chart *ngFor="let chart of myCharts"
+                  [title]="chart.title"
+                  [type]="chart.chartType"
+                  [data]="chart.myData"
+                  [options]="chart.myOptions"></google-chart>
+  </div>
+  <div class="regen-btn">
+    <div class="text-end"><button type="reset" class="btn btn-sm btn-primary" (click)="regenForest()">Generate new forest</button></div>
+    <div class="text-end mt-1"><button type="reset" class="btn btn-sm btn-primary" (click)="loadForest('treegrid.txt')">Load forest</button></div>
+  </div>
+</div>

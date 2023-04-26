@@ -1,0 +1,12 @@
+<div class="modal" [class.d-none]="isModalClosed">
+  <div class="modal-bg">
+    <div class="modal-body">
+      <div class="modal-text">{{message}}</div>
+
+      <div class="modal-buttons">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">No!</button>
+        <button type="button" class="btn btn-danger" (click)="confirmModal()">Yes! Delete!</button>
+      </div>
+    </div>
+  </div>
+</div>
