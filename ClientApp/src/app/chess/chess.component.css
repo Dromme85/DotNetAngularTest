@@ -1,0 +1,77 @@
+.chess-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5em;
+  height: 100vh;
+  overflow: hidden;
+}
+
+  .chess-body .chess-title {
+    position: fixed;
+    display: block;
+    top: 4rem;
+    left: 10rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-color);
+  }
+
+  .chess-body table {
+    table-layout: fixed;
+    width: auto;
+    height: auto;
+    outline: 1em outset #9c5613;
+  }
+
+th, td {
+  overflow: hidden;
+}
+
+.chess-body tr:nth-child(odd) td:nth-child(even) {
+  background: var(--board-dark-color);
+}
+
+.chess-body tr:nth-child(even) td:nth-child(odd) {
+  background: var(--board-dark-color);
+}
+
+.chess-board {
+  background: var(--board-light-color);
+}
+
+.cell {
+  text-align: center;
+}
+
+  .cell:hover {
+    outline: solid .2em #ffd80070;
+    outline-offset: -.2em;
+    z-index: 0;
+  }
+
+  .cell .cell-content {
+    width: 2em;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+    .cell .cell-content:has(.selected) {
+      outline: solid .2em #00ff0070;
+      outline-offset: -.3em;
+    }
+    .cell .cell-content:has(.move) {
+      outline: solid .2em #00ff0070;
+      outline-offset: -.5em;
+    }
+
+    .cell .cell-content i.light {
+      color: var(--piece-light-color);
+      text-shadow: 0 0 .07em #fffdf0;
+    }
+    .cell .cell-content i.dark {
+      color: var(--piece-dark-color);
+      text-shadow: 0 0 .07em #808080;
+    }

@@ -1,0 +1,15 @@
+<div class="chess-body">
+  <div class="chess-title">Chasck</div>
+  <table style="font-size: calc(100vh / ({{chess.size[0]}} * {{chess.size[2]}}))">
+    <tr *ngFor="let rows of chess.board; index as y" class="chess-board">
+      <td *ngFor="let slot of rows; index as x" class="cell" (click)="cellClick(x, y)">
+        <div class="cell-content">
+          <div *ngIf="chess.getPieceAtXY(x, y) as p" [ngClass]="{ selected: p.selected }">
+            <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}}" [ngClass]="{ light: !p.color, dark: p.color }"></i>
+          </div>
+          <div [ngClass]="{ move: chess.board[x][y] }"></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
