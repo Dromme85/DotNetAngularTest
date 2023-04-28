@@ -75,3 +75,23 @@ th, td {
       color: var(--piece-dark-color);
       text-shadow: 0 0 .07em #808080;
     }
+
+.info {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 25px;
+  right: 25px;
+}
+
+.info-box {
+  display: inline-block;
+  width: 160px;
+  height: auto;
+  background-color: #ffffffdd;
+  border-radius: 4px;
+  z-index: 2;
+  padding: 10px;
+  margin-bottom: .5rem;
+  box-shadow: 0 4px 8px 0 #00000033, 0 6px 20px 0 #00000044;
+}

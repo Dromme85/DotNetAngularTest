@@ -3,13 +3,41 @@
   <table style="font-size: calc(100vh / ({{chess.size[0]}} * {{chess.size[2]}}))">
     <tr *ngFor="let rows of chess.board; index as y" class="chess-board">
       <td *ngFor="let slot of rows; index as x" class="cell" (click)="cellClick(x, y)">
-        <div class="cell-content">
-          <div *ngIf="chess.getPieceAtXY(x, y) as p" [ngClass]="{ selected: p.selected }">
+        <div class="cell-content" *ngIf="chess.getPieceAtXY(x, y) as p">
+          <div *ngIf="p.alive" [ngClass]="{ selected: p.selected }">
             <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}}" [ngClass]="{ light: !p.color, dark: p.color }"></i>
           </div>
           <div [ngClass]="{ move: chess.board[x][y] }"></div>
         </div>
+        <div *ngIf="y == 0">
+          <div style="position: fixed; transform: translate(.75em, -3.3em);">{{x}}</div>
+        </div>
+        <div *ngIf="x == 0">
+          <div style="position: fixed; transform: translate(-0.75em, -1.8em);">{{y}}</div>
+        </div>
       </td>
     </tr>
   </table>
+  <div>
+
+  </div>
+  <div class="info" *ngIf="oldSelected.alive" (click)="test()">
+    <div class="info-box">
+      <div class="d-flex justify-content-evenly">
+        <small>Id: </small><pre>{{oldSelected.id}}</pre>
+      </div>
+      <div class="d-flex justify-content-evenly">
+        <small>Piece: </small><pre>{{oldSelected.getType()}}</pre>
+      </div>
+      <div class="d-flex justify-content-evenly">
+        <small>Color: </small><pre>{{oldSelected.getColor()}}</pre>
+      </div>
+      <div class="d-flex justify-content-evenly">
+        <small>Alive: </small><pre>{{oldSelected.alive}}</pre>
+      </div>
+      <div class="d-flex justify-content-evenly">
+        <small>Pos: </small><pre>{{oldSelected.pos[0]}}, {{oldSelected.pos[1]}}</pre>
+      </div>
+    </div>
+  </div>
 </div>
