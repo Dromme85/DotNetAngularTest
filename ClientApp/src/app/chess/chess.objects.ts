@@ -23,6 +23,19 @@ export class ChessBoard {
     return this.pieces[i];
   }
 
+  anyPieceAtPos(pos: number[]): boolean {
+    return this.anyPieceAtXY(pos[0], pos[1]);
+  }
+
+  anyPieceAtXY(x: number, y: number): boolean {
+    const i = this.pieces.findIndex(p => p.pos[0] === x && p.pos[1] === y);
+
+    if (i === -1)
+      return false;
+
+    return true;
+  }
+
   getPieceName(p: PieceType): string {
     return PieceType[p];
   }
