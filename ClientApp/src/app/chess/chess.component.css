@@ -7,15 +7,70 @@
   overflow: hidden;
 }
 
-  .chess-body .chess-title {
+  .chess-body .chess-left {
     position: fixed;
     display: block;
     top: 4rem;
     left: 10rem;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-color);
   }
+
+    .chess-body .chess-left .chess-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-color);
+    }
+
+    .chess-body .chess-left .chess-info {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 1rem;
+    }
+
+      .chess-body .chess-left .chess-info i {
+        font-size: 3rem;
+      }
+
+      .chess-body .chess-left .chess-info:has(ul) {
+        background: var(--primary-color-light);
+        overflow: auto;
+        height: calc(100vh - 18rem);
+      }
+        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar {
+          width: .3rem;
+        }
+        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: .15rem;
+        }
+
+      .chess-body .chess-left .chess-info ul {
+        list-style: none;
+        padding: .5rem;
+        color: var(--text-color);
+        min-width: 12rem;
+      }
+
+  .chess-body .chess-dead {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    height: 40vh;
+  }
+    .chess-body .chess-dead i {
+      font-size: 1.5em;
+    }
+
+    .chess-body .chess-dead.light {
+      transform: translate(-50vh, 50%);
+      flex-direction: column-reverse;
+    }
+
+    .chess-body .chess-dead.dark {
+      transform: translate(50vh, -50%);
+      flex-direction: column;
+    }
 
   .chess-body table {
     table-layout: fixed;
@@ -67,14 +122,14 @@ th, td {
       outline-offset: -.5em;
     }
 
-    .cell .cell-content i.light {
-      color: var(--piece-light-color);
-      text-shadow: 0 0 .07em #fffdf0;
-    }
-    .cell .cell-content i.dark {
-      color: var(--piece-dark-color);
-      text-shadow: 0 0 .07em #808080;
-    }
+i.light {
+  color: var(--piece-light-color);
+  text-shadow: 0 0 .07em #fffdf0;
+}
+i.dark {
+  color: var(--piece-dark-color);
+  text-shadow: 0 0 .07em #808080;
+}
 
 .info {
   position: fixed;

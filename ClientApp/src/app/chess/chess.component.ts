@@ -12,8 +12,13 @@ import {
 })
 export class ChessComponent implements OnInit {
 
+  public debug: boolean = false;
+
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
+  public moves: string[] = [];
+  public deadLightPieces: ChessPiece[] = [];
+  public deadDarkPieces: ChessPiece[] = [];
 
   constructor() {
     this.resetBoard();
@@ -27,12 +32,18 @@ export class ChessComponent implements OnInit {
 
     if (this.oldSelected) {
       if (this.chess.board[x][y]) {
+        var s: string = `${PieceType[this.oldSelected.piece].slice(0, 1)}${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])} -> `;
         this.oldSelected.makeMove(x, y);
+        s += `${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])}`;
         if (p.alive && p.color !== this.oldSelected.color) {
+          s += `, ${PieceType[p.piece]} killed!`;
           p.alive = false;
           p.pos = [];
         }
         this.chess.nextTurn();
+        this.moves.unshift(s);
+        this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color);
+        this.deadDarkPieces = this.chess.pieces.filter(p => !p.alive && !p.color);
       }
 
       if (p.alive && p.color === this.chess.turn) {
@@ -44,6 +55,20 @@ export class ChessComponent implements OnInit {
       }
     }
 
+  }
+
+  getYLetter(y: number, reverse: boolean = false): string {
+    switch (y) {
+      case 0: return reverse ? 'H' : 'A';
+      case 1: return reverse ? 'G' : 'B';
+      case 2: return reverse ? 'F' : 'C';
+      case 3: return reverse ? 'E' : 'D';
+      case 4: return reverse ? 'D' : 'E';
+      case 5: return reverse ? 'C' : 'F';
+      case 6: return reverse ? 'B' : 'G';
+      case 7: return reverse ? 'A' : 'H';
+      default: return '';
+    }
   }
 
   test() {
@@ -84,7 +109,25 @@ export class ChessComponent implements OnInit {
             }
           }
           else if (!pamp.alive) {
-            this.chess.board[pos[0]][pos[1]] = true;
+            // if position above piece is not the same as checked position ...
+            if (p.pos[1] - 1 !== pos[1]) {
+              // ... check if the position above has a piece and if it's alive
+              if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] - 1)) {
+                this.chess.board[pos[0]][pos[1]] = true;
+              }
+            }
+            else if (p.pos[1] - 1 === pos[1]) {
+              this.chess.board[pos[0]][pos[1]] = true;
+            }
+
+            if (p.pos[1] + 1 !== pos[1]) {
+              if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] + 1)) {
+                this.chess.board[pos[0]][pos[1]] = true;
+              }
+            }
+            else if (p.pos[1] + 1 === pos[1]) {
+              this.chess.board[pos[0]][pos[1]] = true;
+            }
           }
         }
 
@@ -301,7 +344,8 @@ export class ChessComponent implements OnInit {
 
           if (pamp.alive && pamp.color === p.color)
             isFreeToMove = false;
-          // TODO: check so the king cant check mate himself!
+
+          // Make sure the king cant check mate himself!
           else if (!pamp.alive) {
             // Pawn
             let e1 = this.chess.getPieceAtXY(pos[0] + 1, p.color ? pos[1] - 1 : pos[1] + 1);
@@ -312,7 +356,7 @@ export class ChessComponent implements OnInit {
             }
 
             // Rook (and half queen)
-            let contact: boolean[] = [false, false, false, false];
+            let contact: boolean[] = [false, false, false, false, false, false, false];
             for (let j = 1; j < 8; j++) {
               let e = this.chess.getPieceAtXY(pos[0], pos[1] + j);
               if (e.piece === PieceType.rook && e.color !== p.color && !contact[0]
@@ -345,16 +389,75 @@ export class ChessComponent implements OnInit {
                 contact[3] = true;
               }
               else if (e.alive && e.color === p.color && !contact[3]) contact[3] = true;
+
+              // Bishop (and other half queen)
+              e = this.chess.getPieceAtXY(pos[0] - j, pos[1] - j);
+              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[4]
+                || e.piece === PieceType.queen && e.color !== p.color && !contact[4]) {
+                isFreeToMove = false;
+                contact[4] = true;
+              }
+              else if (e.alive && e.color === p.color && !contact[4]) contact[4] = true;
+
+              e = this.chess.getPieceAtXY(pos[0] + j, pos[1] - j);
+              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[5]
+                || e.piece === PieceType.queen && e.color !== p.color && !contact[5]) {
+                isFreeToMove = false;
+                contact[5] = true;
+              }
+              else if (e.alive && e.color === p.color && !contact[5]) contact[5] = true;
+
+              e = this.chess.getPieceAtXY(pos[0] - j, pos[1] + j);
+              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[6]
+                || e.piece === PieceType.queen && e.color !== p.color && !contact[6]) {
+                isFreeToMove = false;
+                contact[6] = true;
+              }
+              else if (e.alive && e.color === p.color && !contact[6]) contact[6] = true;
+
+              e = this.chess.getPieceAtXY(pos[0] + j, pos[1] + j);
+              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[7]
+                || e.piece === PieceType.queen && e.color !== p.color && !contact[7]) {
+                isFreeToMove = false;
+                contact[7] = true;
+              }
+              else if (e.alive && e.color === p.color && !contact[7]) contact[7] = true;
             }
 
-            // Bishop (and half queen)
-
-
             // Knight
+            let e: ChessPiece[] = [
+              this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 2),
+              this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 2),
+              this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 2),
+              this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 2),
+              this.chess.getPieceAtXY(pos[0] + 2, pos[1] + 1),
+              this.chess.getPieceAtXY(pos[0] + 2, pos[1] - 1),
+              this.chess.getPieceAtXY(pos[0] - 2, pos[1] + 1),
+              this.chess.getPieceAtXY(pos[0] - 2, pos[1] - 1),
+            ];
+            for (var j = 0; j < e.length; j++) {
+              if (e[j].piece === PieceType.knight && e[j].color !== p.color) {
+                isFreeToMove = false;
+              }
+            }
 
             // King
+            e = [
+              this.chess.getPieceAtXY(pos[0], pos[1] - 1),
+              this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 1),
+              this.chess.getPieceAtXY(pos[0] + 1, pos[1]),
+              this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 1),
+              this.chess.getPieceAtXY(pos[0], pos[1] + 1),
+              this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 1),
+              this.chess.getPieceAtXY(pos[0] - 1, pos[1]),
+              this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 1),
+            ];
+            for (var j = 0; j < e.length; j++) {
+              if (e[j].piece === PieceType.king && e[j].color !== p.color) {
+                isFreeToMove = false;
+              }
+            }
           }
-
 
           if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
         }
@@ -437,12 +540,14 @@ export class ChessComponent implements OnInit {
     }
 
     // Test Pieces
-    p = new PieceQueen({ alive: true, piece: PieceType.queen, color: true, pos: [3, 3] })
-    this.chess.pieces.push(p);
-    p = new PieceBishop({ alive: true, piece: PieceType.bishop, color: false, pos: [5, 5] })
-    this.chess.pieces.push(p);
-    p = new PiecePawn({ alive: true, piece: PieceType.pawn, color: false, pos: [3, 5] })
-    this.chess.pieces.push(p);
+    if (this.debug) {
+      p = new PieceQueen({ alive: true, piece: PieceType.queen, color: true, pos: [3, 3] })
+      this.chess.pieces.push(p);
+      p = new PieceKnight({ alive: true, piece: PieceType.knight, color: false, pos: [6, 5] })
+      this.chess.pieces.push(p);
+      p = new PieceKing({ alive: true, piece: PieceType.king, color: false, pos: [3, 5] })
+      this.chess.pieces.push(p);
+    }
   }
 
 }

@@ -1,5 +1,17 @@
 <div class="chess-body">
-  <div class="chess-title">Chasck</div>
+  <div class="chess-left">
+    <div class="chess-title">Chæsck</div>
+    <div class="chess-info">
+      <i class="fa-solid fa-chess-pawn " [ngClass]="{ light: !chess.turn, dark: chess.turn }"></i>
+      <div>{{chess.getTurnText()}}'s turn</div>
+    </div>
+    <div class="chess-info">
+      <ul>
+        <li><b>Moves:</b></li>
+        <li *ngFor="let move of moves">{{move}}</li>
+      </ul>
+    </div>
+  </div>
   <table style="font-size: calc(100vh / ({{chess.size[0]}} * {{chess.size[2]}}))">
     <tr *ngFor="let rows of chess.board; index as y" class="chess-board">
       <td *ngFor="let slot of rows; index as x" class="cell" (click)="cellClick(x, y)">
@@ -10,18 +22,27 @@
           <div [ngClass]="{ move: chess.board[x][y] }"></div>
         </div>
         <div *ngIf="y == 0">
-          <div style="position: fixed; transform: translate(.75em, -3.3em);">{{x}}</div>
+          <div *ngIf="debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{x}}</div>
+          <div *ngIf="!debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{x + 1}}</div>
         </div>
         <div *ngIf="x == 0">
-          <div style="position: fixed; transform: translate(-0.75em, -1.8em);">{{y}}</div>
+          <div *ngIf="debug" style="position: fixed; transform: translate(-0.75em, -1.8em);">{{y}}</div>
+          <div *ngIf="!debug" style="position: fixed; transform: translate(-0.8em, -1.8em);">{{getYLetter(y)}}</div>
         </div>
       </td>
     </tr>
   </table>
-  <div>
-
+  <div class="chess-dead light">
+    <div *ngFor="let p of deadLightPieces">
+        <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} dark"></i>
+    </div>
   </div>
-  <div class="info" *ngIf="oldSelected.alive" (click)="test()">
+  <div class="chess-dead dark">
+    <div *ngFor="let p of deadDarkPieces">
+        <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} light"></i>
+    </div>
+  </div>
+  <div class="info" *ngIf="oldSelected.alive && debug" (click)="test()">
     <div class="info-box">
       <div class="d-flex justify-content-evenly">
         <small>Id: </small><pre>{{oldSelected.id}}</pre>

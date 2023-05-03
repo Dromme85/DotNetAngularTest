@@ -10,6 +10,10 @@ export class ChessBoard {
     this.turn = !this.turn;
   }
 
+  getTurnText(): string {
+    return this.turn ? "Gold" : "Silver";
+  }
+
   getPieceAtPos(pos: number[]): ChessPiece {
     return this.getPieceAtXY(pos[0], pos[1]);
   }
