@@ -10,8 +10,8 @@ This chess game is made with Angular.
   - A castle can't be made if:
     - The King or Rook previously moved
     - There are no pieces between the King and the Rook
-    - The King isn't in check - *skippable*
-    - The King does not pass through or finish on a square that is under attack - *skippable*
+    - *skippable* - The King isn't in check
+    - *skippable* - The King does not pass through or finish on a square that is under attack
 - Check - Might also require some thinking power to solve.
 
 ## Known Bugs
