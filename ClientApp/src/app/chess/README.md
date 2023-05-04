@@ -4,7 +4,7 @@ This chess game is made with Angular.
 
 ## Missing Features
 
-- **Castling** (sv. Rockad) - Might take some thinking power to solve, because of all the special rules
+- [] **Castling** (sv. Rockad) - Might take some thinking power to solve, because of all the special rules
   - Short castling - A castle made on the kingside when the King moves to G and the Rook to F
   - Long castling - A castle made on the queenside when the King moves to C and the Rook to D
   - A castle can be made if:
@@ -12,16 +12,16 @@ This chess game is made with Angular.
     - There are no pieces between the King and the Rook
     - *skippable* - The King isn't in check
     - *skippable* - The King does not pass through or finish on a square that is under attack
-- **Check** - Might also require some thinking power to solve
-- **Check Mate** - It shouldn't be possible to make more moves after check mate
-- **Promotion** - When a Pawn moves to the other side and gets promoted to a Queen
+- [] **Check** - Might also require some thinking power to solve
+- [] **Check Mate** - It shouldn't be possible to make more moves after check mate
+- [] **Promotion** - When a Pawn moves to the other side and gets promoted to a Queen
   - Underpromotion - *skippable* - The player can choose to "underpromote" to Rook, Bishop or Knight in addition to Queen
-- **En Passant** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/En_passant)
+- [] **En Passant** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/En_passant)
   - A pawn can kill an enemy pawn that has moved two square by attacking the passed square
-- **(Figurine) Algebraic Notation** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
+- [] **(Figurine) Algebraic Notation** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
   - The standard method for recording and describing the moves in a game of chess
-- **Reset/Give Up** - Button to reset the board should be added
-- **Save State** - Game shouldn't be reset on page refresh
+- [] **Reset/Give Up** - Button to reset the board should be added
+- [] **Save State** - Game shouldn't be reset on page refresh
   - Save to database?
   - Save locally (session)?
   - Save in cookies?

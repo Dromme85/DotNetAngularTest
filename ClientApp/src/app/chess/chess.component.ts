@@ -13,7 +13,7 @@ import {
 
 export class ChessComponent implements OnInit {
 
-  public debug: boolean = true;
+  public debug: boolean = false;
 
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
@@ -30,11 +30,21 @@ export class ChessComponent implements OnInit {
   }
 
   cellClick(x: number, y: number) {
-    if (this.state === StateType.mate) return;
 
     let p = this.chess.getPieceAtXY(x, y);
 
-    if (this.oldSelected) {
+    if (this.state === StateType.mate) {
+      if (this.debug) {
+        if (p.alive)
+          this.selectPiece(p);
+        else
+          this.oldSelected.selected = false;
+      }
+
+      return;
+    }
+
+    if (true) {
       if (this.chess.board[x][y]) {
 
         let s: string = `${this.getPieceLetter(this.oldSelected.piece)}${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])} -> `;
@@ -114,7 +124,8 @@ export class ChessComponent implements OnInit {
 
     this.clearMoves();
 
-    if (p.selected) {
+    if (p.selected && this.state !== StateType.mate
+      || p.selected && (this.state !== StateType.mate && this.debug)) {
       var pam = p.availableMoves();
       var enemyFound: boolean[] = [false, false, false, false, false, false, false, false];
 

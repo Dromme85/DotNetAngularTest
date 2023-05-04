@@ -60,7 +60,7 @@ export class ChessMove {
 }
 
 export enum StateType {
-  move, kill, check, mate, remi, none = -1
+  move, kill, check, mate, draw, stale, none = -1
 }
 
 export enum PieceType {
