@@ -2,12 +2,15 @@
   <div class="chess-left">
     <div class="chess-title">Chæsck</div>
     <div class="chess-info">
-      <i class="fa-solid fa-chess-pawn " [ngClass]="{ light: !chess.turn, dark: chess.turn }"></i>
-      <div>{{chess.getTurnText()}}'s turn</div>
+      <i *ngIf="state != 3" class="fa-solid fa-chess-pawn " [ngClass]="{ light: !chess.turn, dark: chess.turn }"></i>
+      <i *ngIf="state == 3" class="fa-solid fa-chess-king " [ngClass]="{ light: chess.turn, dark: !chess.turn }"></i>
+      <div *ngIf="state != 3">{{chess.getTurnText()}}'s turn</div>
+      <div *ngIf="state == 3">{{chess.getTurnText(true)}} won the game!</div>
+      <div *ngIf="state == 4">Remi</div>
     </div>
     <div class="chess-info">
       <ul>
-        <li><b>Moves:</b></li>
+        <li><b>Game Notation:</b></li>
         <li *ngFor="let move of moves">{{move}}</li>
       </ul>
     </div>

@@ -10,7 +10,8 @@ export class ChessBoard {
     this.turn = !this.turn;
   }
 
-  getTurnText(): string {
+  getTurnText(reverse: boolean = false): string {
+    if (reverse) return this.turn ? "Silver" : "Gold";
     return this.turn ? "Gold" : "Silver";
   }
 
@@ -50,7 +51,7 @@ export class ChessMove {
   newPos: number[] = [];
   color: boolean = false;
   pieceId: number = -1;
-  type: MoveType = -1;
+  //type: MoveType = -1;
   //pastMoves: ChessMove[] = [];
 
   constructor(init?: Partial<ChessMove>) {
@@ -58,12 +59,12 @@ export class ChessMove {
   }
 }
 
-export enum MoveType {
-  move, collision, kill, chess, mate, none = -1
+export enum StateType {
+  move, kill, check, mate, remi, none = -1
 }
 
 export enum PieceType {
-  pawn, bishop, knight, rook, queen, king, none = -1
+  pawn, rook, knight, bishop, queen, king, none = -1
 }
 
 
@@ -95,6 +96,8 @@ export class ChessPiece {
 }
 
 export class PieceRook extends ChessPiece {
+
+  hasMoved: boolean = false;
 
   availableMoves(): ChessMove[] {
     var m: ChessMove[] = [];
@@ -141,6 +144,7 @@ export class PieceRook extends ChessPiece {
   }
 
   makeMove(x: number, y: number) {
+    if (!this.hasMoved) this.hasMoved = true;
     var pos: number[] = [x, y];
     var m = this.availableMoves();
     for (var i = 0; i < m.length; i++) {
@@ -376,6 +380,8 @@ export class PieceQueen extends ChessPiece {
 
 export class PieceKing extends ChessPiece {
 
+  hasMoved: boolean = false;
+
   availableMoves(): ChessMove[] {
     var m: ChessMove[] = [];
     var cm: ChessMove = new ChessMove({ oldPos: this.pos, newPos: [], color: this.color, pieceId: this.id });
@@ -433,6 +439,7 @@ export class PieceKing extends ChessPiece {
   }
 
   makeMove(x: number, y: number) {
+    if (!this.hasMoved) this.hasMoved = true;
     var pos: number[] = [x, y];
     var m = this.availableMoves();
     for (var i = 0; i < m.length; i++) {

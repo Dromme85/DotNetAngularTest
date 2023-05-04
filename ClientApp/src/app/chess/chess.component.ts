@@ -1,24 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 
 import {
-  ChessBoard, ChessPiece, ChessMove, PieceType,
-  PiecePawn, PieceRook, PieceBishop, PieceKnight, PieceQueen, PieceKing
-} from './chess.objects'
+  ChessBoard, ChessPiece, ChessMove, PieceType, StateType,
+  PiecePawn, PieceRook, PieceBishop, PieceKnight, PieceQueen, PieceKing,
+} from './chess.objects';
 
 @Component({
   selector: 'app-chess',
   templateUrl: './chess.component.html',
   styleUrls: ['./chess.component.css']
 })
+
 export class ChessComponent implements OnInit {
 
-  public debug: boolean = false;
+  public debug: boolean = true;
 
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
   public moves: string[] = [];
   public deadLightPieces: ChessPiece[] = [];
   public deadDarkPieces: ChessPiece[] = [];
+  public state: StateType = StateType.none;
 
   constructor() {
     this.resetBoard();
@@ -28,15 +30,21 @@ export class ChessComponent implements OnInit {
   }
 
   cellClick(x: number, y: number) {
-    var p = this.chess.getPieceAtXY(x, y);
+    if (this.state === StateType.mate) return;
+
+    let p = this.chess.getPieceAtXY(x, y);
 
     if (this.oldSelected) {
       if (this.chess.board[x][y]) {
-        var s: string = `${PieceType[this.oldSelected.piece].slice(0, 1)}${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])} -> `;
+
+        let s: string = `${this.getPieceLetter(this.oldSelected.piece)}${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])} -> `;
         this.oldSelected.makeMove(x, y);
         s += `${this.oldSelected.pos[0] + 1}${this.getYLetter(this.oldSelected.pos[1])}`;
+
+        this.state = StateType.move;
         if (p.alive && p.color !== this.oldSelected.color) {
           s += `, ${PieceType[p.piece]} killed!`;
+          this.state = p.piece === PieceType.king ? StateType.mate : StateType.kill;
           p.alive = false;
           p.pos = [];
         }
@@ -71,6 +79,19 @@ export class ChessComponent implements OnInit {
     }
   }
 
+  getPieceLetter(p: PieceType): string {
+    switch (p) {
+      case PieceType.pawn: return '';
+      case PieceType.rook: return 'R';
+      case PieceType.knight: return 'N';
+      case PieceType.bishop: return 'B';
+      case PieceType.queen: return 'Q';
+      case PieceType.king: return 'K';
+      case PieceType.none: return '';
+      default: return '';
+    }
+  }
+
   test() {
     console.log(this.chess.pieces);
     //console.log(this.chess.board);
@@ -101,369 +122,398 @@ export class ChessComponent implements OnInit {
         var pos = pam[i].newPos;
         var pamp = this.chess.getPieceAtPos(pos);
 
-        if (p.piece === PieceType.pawn) {
-          // Pawn kill move
-          if (p.pos[0] > pos[0] || p.pos[0] < pos[0]) {
-            if (pamp.alive && pamp.color === !this.chess.turn) {
-              this.chess.board[pos[0]][pos[1]] = true;
-            }
-          }
-          else if (!pamp.alive) {
-            // if position above piece is not the same as checked position ...
-            if (p.pos[1] - 1 !== pos[1]) {
-              // ... check if the position above has a piece and if it's alive
-              if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] - 1)) {
-                this.chess.board[pos[0]][pos[1]] = true;
-              }
-            }
-            else if (p.pos[1] - 1 === pos[1]) {
-              this.chess.board[pos[0]][pos[1]] = true;
-            }
-
-            if (p.pos[1] + 1 !== pos[1]) {
-              if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] + 1)) {
-                this.chess.board[pos[0]][pos[1]] = true;
-              }
-            }
-            else if (p.pos[1] + 1 === pos[1]) {
-              this.chess.board[pos[0]][pos[1]] = true;
-            }
-          }
+        switch (p.piece) {
+          case PieceType.pawn:
+            this.chess.board[pos[0]][pos[1]] = this.testPawnMove(p, pamp, pos);
+            break;
+          case PieceType.rook:
+            this.chess.board[pos[0]][pos[1]] = this.testRookMove(p, pos, enemyFound);
+            break;
+          case PieceType.bishop:
+            this.chess.board[pos[0]][pos[1]] = this.testBishopMove(p, pos, enemyFound);
+            break;
+          case PieceType.knight:
+            this.chess.board[pos[0]][pos[1]] = this.testKnightMove(p, pamp, pos);
+            break;
+          case PieceType.queen:
+            this.chess.board[pos[0]][pos[1]] = this.testQueenMove(p, pos, enemyFound);
+            break;
+          case PieceType.king:
+            this.chess.board[pos[0]][pos[1]] = this.testKingMove(p, pamp, pos);
+            break;
+          default: break;
         }
 
-        else if (p.piece === PieceType.rook) {
-          var isFreeToMove = true;
-
-          // North
-          if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
-                enemyFound[0] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // East
-          else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
-            for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
-              var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
-                enemyFound[1] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South
-          else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
-                enemyFound[2] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // West
-          else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
-            for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
-              var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
-                enemyFound[3] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-
-
-          if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
-        }
-
-        else if (p.piece === PieceType.bishop) {
-          var isFreeToMove = true;
-
-          // North west
-          if (p.pos[1] > pos[1] && p.pos[0] > pos[0]) {
-            var offset = p.pos[1] - p.pos[0];
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              var checkp = this.chess.getPieceAtXY(j - offset, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
-                enemyFound[0] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // North east
-          else if (p.pos[0] < pos[0] && p.pos[1] > pos[1]) {
-            var offset = p.pos[0] - p.pos[1];
-            var k = p.pos[0];
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              k++;
-              var checkp = this.chess.getPieceAtXY(k, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
-                enemyFound[1] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South east
-          else if (p.pos[1] < pos[1] && p.pos[0] < pos[0]) {
-            var offset = p.pos[1] - p.pos[0];
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              var checkp = this.chess.getPieceAtXY(j - offset, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
-                enemyFound[2] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South west
-          else if (p.pos[0] > pos[0] && p.pos[1] < pos[1]) {
-            var offset = p.pos[0] - p.pos[1];
-            var k = p.pos[0];
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              k--;
-              var checkp = this.chess.getPieceAtXY(k, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
-                enemyFound[3] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-
-          if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
-        }
-
-        else if (p.piece === PieceType.knight) {
-          var isFreeToMove = true;
-
-          if (pamp.alive && pamp.color === p.color)
-            isFreeToMove = false;
-
-          if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
-        }
-
-        else if (p.piece === PieceType.queen) {
-          var isFreeToMove = true;
-
-          // North
-          if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
-                enemyFound[0] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // East
-          else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
-            for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
-              var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
-                enemyFound[1] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South
-          else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
-                enemyFound[2] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // West
-          else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
-            for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
-              var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
-                enemyFound[3] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-
-          // North west
-          else if (p.pos[1] > pos[1] && p.pos[0] > pos[0]) {
-            var offset = p.pos[1] - p.pos[0];
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              var checkp = this.chess.getPieceAtXY(j - offset, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[4])
-                enemyFound[4] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // North east
-          else if (p.pos[0] < pos[0] && p.pos[1] > pos[1]) {
-            var offset = p.pos[0] - p.pos[1];
-            var k = p.pos[0];
-            for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
-              k++;
-              var checkp = this.chess.getPieceAtXY(k, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[5])
-                enemyFound[5] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South east
-          else if (p.pos[1] < pos[1] && p.pos[0] < pos[0]) {
-            var offset = p.pos[1] - p.pos[0];
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              var checkp = this.chess.getPieceAtXY(j - offset, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[6])
-                enemyFound[6] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-          // South west
-          else if (p.pos[0] > pos[0] && p.pos[1] < pos[1]) {
-            var offset = p.pos[0] - p.pos[1];
-            var k = p.pos[0];
-            for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
-              k--;
-              var checkp = this.chess.getPieceAtXY(k, j);
-              if (checkp.alive && checkp.color !== p.color && !enemyFound[7])
-                enemyFound[7] = true;
-              else if (checkp.alive)
-                isFreeToMove = false;
-            }
-          }
-
-          if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
-        }
-
-        else if (p.piece === PieceType.king) {
-          let isFreeToMove = true;
-
-          if (pamp.alive && pamp.color === p.color)
-            isFreeToMove = false;
-
-          // Make sure the king cant check mate himself!
-          else if (!pamp.alive) {
-            // Pawn
-            let e1 = this.chess.getPieceAtXY(pos[0] + 1, p.color ? pos[1] - 1 : pos[1] + 1);
-            let e2 = this.chess.getPieceAtXY(pos[0] - 1, p.color ? pos[1] - 1 : pos[1] + 1);
-            if (e1.piece === PieceType.pawn && e1.color !== p.color
-              || e2.piece === PieceType.pawn && e2.color !== p.color) {
-              isFreeToMove = false;
-            }
-
-            // Rook (and half queen)
-            let contact: boolean[] = [false, false, false, false, false, false, false];
-            for (let j = 1; j < 8; j++) {
-              let e = this.chess.getPieceAtXY(pos[0], pos[1] + j);
-              if (e.piece === PieceType.rook && e.color !== p.color && !contact[0]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[0]) {
-                isFreeToMove = false;
-                contact[0] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[0]) contact[0] = true;
-
-              e = this.chess.getPieceAtXY(pos[0], pos[1] - j);
-              if (e.piece === PieceType.rook && e.color !== p.color && !contact[1]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[1]) {
-                isFreeToMove = false;
-                contact[1] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[1]) contact[1] = true;
-
-              e = this.chess.getPieceAtXY(pos[0] + j, pos[1]);
-              if (e.piece === PieceType.rook && e.color !== p.color && !contact[2]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[2]) {
-                isFreeToMove = false;
-                contact[2] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[2]) contact[2] = true;
-
-              e = this.chess.getPieceAtXY(pos[0] - j, pos[1]);
-              if (e.piece === PieceType.rook && e.color !== p.color && !contact[3]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[3]) {
-                isFreeToMove = false;
-                contact[3] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[3]) contact[3] = true;
-
-              // Bishop (and other half queen)
-              e = this.chess.getPieceAtXY(pos[0] - j, pos[1] - j);
-              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[4]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[4]) {
-                isFreeToMove = false;
-                contact[4] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[4]) contact[4] = true;
-
-              e = this.chess.getPieceAtXY(pos[0] + j, pos[1] - j);
-              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[5]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[5]) {
-                isFreeToMove = false;
-                contact[5] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[5]) contact[5] = true;
-
-              e = this.chess.getPieceAtXY(pos[0] - j, pos[1] + j);
-              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[6]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[6]) {
-                isFreeToMove = false;
-                contact[6] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[6]) contact[6] = true;
-
-              e = this.chess.getPieceAtXY(pos[0] + j, pos[1] + j);
-              if (e.piece === PieceType.bishop && e.color !== p.color && !contact[7]
-                || e.piece === PieceType.queen && e.color !== p.color && !contact[7]) {
-                isFreeToMove = false;
-                contact[7] = true;
-              }
-              else if (e.alive && e.color === p.color && !contact[7]) contact[7] = true;
-            }
-
-            // Knight
-            let e: ChessPiece[] = [
-              this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 2),
-              this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 2),
-              this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 2),
-              this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 2),
-              this.chess.getPieceAtXY(pos[0] + 2, pos[1] + 1),
-              this.chess.getPieceAtXY(pos[0] + 2, pos[1] - 1),
-              this.chess.getPieceAtXY(pos[0] - 2, pos[1] + 1),
-              this.chess.getPieceAtXY(pos[0] - 2, pos[1] - 1),
-            ];
-            for (var j = 0; j < e.length; j++) {
-              if (e[j].piece === PieceType.knight && e[j].color !== p.color) {
-                isFreeToMove = false;
-              }
-            }
-
-            // King
-            e = [
-              this.chess.getPieceAtXY(pos[0], pos[1] - 1),
-              this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 1),
-              this.chess.getPieceAtXY(pos[0] + 1, pos[1]),
-              this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 1),
-              this.chess.getPieceAtXY(pos[0], pos[1] + 1),
-              this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 1),
-              this.chess.getPieceAtXY(pos[0] - 1, pos[1]),
-              this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 1),
-            ];
-            for (var j = 0; j < e.length; j++) {
-              if (e[j].piece === PieceType.king && e[j].color !== p.color) {
-                isFreeToMove = false;
-              }
-            }
-          }
-
-          if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
-        }
-        // end piece checking
       }
     }
+  }
+
+  testPawnMove(p: ChessPiece, pamp: ChessPiece, pos: number[]): boolean {
+
+    let isFreeToMove: boolean = false;
+
+    // Pawn kill move
+    if (p.pos[0] > pos[0] || p.pos[0] < pos[0]) {
+      if (pamp.alive && pamp.color === !this.chess.turn) {
+        isFreeToMove = true;
+      }
+    }
+    else if (!pamp.alive) {
+      // if position above piece is not the same as checked position ...
+      if (p.pos[1] - 1 !== pos[1]) {
+        // ... check if the position above has a piece and if it's alive
+        if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] - 1)) {
+          isFreeToMove = true;
+        }
+      }
+      else if (p.pos[1] - 1 === pos[1]) {
+        isFreeToMove = true;
+      }
+
+      if (p.pos[1] + 1 !== pos[1]) {
+        if (!this.chess.anyPieceAtXY(p.pos[0], p.pos[1] + 1)) {
+          isFreeToMove = true;
+        }
+      }
+      else if (p.pos[1] + 1 === pos[1]) {
+        isFreeToMove = true;
+      }
+    }
+
+    return isFreeToMove;
+  }
+
+  testRookMove(p: ChessPiece, pos: number[], enemyFound: boolean[]): boolean {
+
+    let isFreeToMove = true;
+
+    // North
+    if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        var checkp = this.chess.getPieceAtXY(p.pos[0], j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
+          enemyFound[0] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // East
+    else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
+      for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
+        var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
+          enemyFound[1] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South
+    else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        var checkp = this.chess.getPieceAtXY(p.pos[0], j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
+          enemyFound[2] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // West
+    else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
+      for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
+        var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
+          enemyFound[3] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+
+    return isFreeToMove;
+  }
+
+  testBishopMove(p: ChessPiece, pos: number[], enemyFound: boolean[]): boolean {
+
+    let isFreeToMove = true;
+    // North west
+    if (p.pos[1] > pos[1] && p.pos[0] > pos[0]) {
+      var offset = p.pos[1] - p.pos[0];
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        var checkp = this.chess.getPieceAtXY(j - offset, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
+          enemyFound[0] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // North east
+    else if (p.pos[0] < pos[0] && p.pos[1] > pos[1]) {
+      var offset = p.pos[0] - p.pos[1];
+      var k = p.pos[0];
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        k++;
+        var checkp = this.chess.getPieceAtXY(k, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
+          enemyFound[1] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South east
+    else if (p.pos[1] < pos[1] && p.pos[0] < pos[0]) {
+      var offset = p.pos[1] - p.pos[0];
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        var checkp = this.chess.getPieceAtXY(j - offset, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
+          enemyFound[2] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South west
+    else if (p.pos[0] > pos[0] && p.pos[1] < pos[1]) {
+      var offset = p.pos[0] - p.pos[1];
+      var k = p.pos[0];
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        k--;
+        var checkp = this.chess.getPieceAtXY(k, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
+          enemyFound[3] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+
+    return isFreeToMove;
+  }
+
+  testKnightMove(p: ChessPiece, pamp: ChessPiece, pos: number[]): boolean {
+
+    var isFreeToMove = true;
+
+    if (pamp.alive && pamp.color === p.color)
+      isFreeToMove = false;
+
+    if (isFreeToMove) this.chess.board[pos[0]][pos[1]] = true;
+
+    return isFreeToMove;
+  }
+
+  testQueenMove(p: ChessPiece, pos: number[], enemyFound: boolean[]): boolean {
+    var isFreeToMove = true;
+
+    // North
+    if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        var checkp = this.chess.getPieceAtXY(p.pos[0], j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
+          enemyFound[0] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // East
+    else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
+      for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
+        var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
+          enemyFound[1] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South
+    else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        var checkp = this.chess.getPieceAtXY(p.pos[0], j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
+          enemyFound[2] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // West
+    else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
+      for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
+        var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
+          enemyFound[3] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+
+    // North west
+    else if (p.pos[1] > pos[1] && p.pos[0] > pos[0]) {
+      var offset = p.pos[1] - p.pos[0];
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        var checkp = this.chess.getPieceAtXY(j - offset, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[4])
+          enemyFound[4] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // North east
+    else if (p.pos[0] < pos[0] && p.pos[1] > pos[1]) {
+      var offset = p.pos[0] - p.pos[1];
+      var k = p.pos[0];
+      for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
+        k++;
+        var checkp = this.chess.getPieceAtXY(k, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[5])
+          enemyFound[5] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South east
+    else if (p.pos[1] < pos[1] && p.pos[0] < pos[0]) {
+      var offset = p.pos[1] - p.pos[0];
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        var checkp = this.chess.getPieceAtXY(j - offset, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[6])
+          enemyFound[6] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+    // South west
+    else if (p.pos[0] > pos[0] && p.pos[1] < pos[1]) {
+      var offset = p.pos[0] - p.pos[1];
+      var k = p.pos[0];
+      for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
+        k--;
+        var checkp = this.chess.getPieceAtXY(k, j);
+        if (checkp.alive && checkp.color !== p.color && !enemyFound[7])
+          enemyFound[7] = true;
+        else if (checkp.alive)
+          isFreeToMove = false;
+      }
+    }
+
+    return isFreeToMove;
+  }
+
+  testKingMove(p: ChessPiece, pamp: ChessPiece, pos: number[]): boolean {
+    let isFreeToMove = true;
+
+    if (pamp.alive && pamp.color === p.color)
+      isFreeToMove = false;
+
+    // Make sure the king cant check mate himself!
+    else if (!pamp.alive) {
+      // Pawn
+      let e1 = this.chess.getPieceAtXY(pos[0] + 1, p.color ? pos[1] - 1 : pos[1] + 1);
+      let e2 = this.chess.getPieceAtXY(pos[0] - 1, p.color ? pos[1] - 1 : pos[1] + 1);
+      if (e1.piece === PieceType.pawn && e1.color !== p.color
+        || e2.piece === PieceType.pawn && e2.color !== p.color) {
+        isFreeToMove = false;
+      }
+
+      // Rook (and half queen)
+      let contact: boolean[] = [false, false, false, false, false, false, false];
+      for (let j = 1; j < 8; j++) {
+        let e = this.chess.getPieceAtXY(pos[0], pos[1] + j);
+        if (e.piece === PieceType.rook && e.color !== p.color && !contact[0]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[0]) {
+          isFreeToMove = false;
+          contact[0] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[0]) contact[0] = true;
+
+        e = this.chess.getPieceAtXY(pos[0], pos[1] - j);
+        if (e.piece === PieceType.rook && e.color !== p.color && !contact[1]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[1]) {
+          isFreeToMove = false;
+          contact[1] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[1]) contact[1] = true;
+
+        e = this.chess.getPieceAtXY(pos[0] + j, pos[1]);
+        if (e.piece === PieceType.rook && e.color !== p.color && !contact[2]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[2]) {
+          isFreeToMove = false;
+          contact[2] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[2]) contact[2] = true;
+
+        e = this.chess.getPieceAtXY(pos[0] - j, pos[1]);
+        if (e.piece === PieceType.rook && e.color !== p.color && !contact[3]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[3]) {
+          isFreeToMove = false;
+          contact[3] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[3]) contact[3] = true;
+
+        // Bishop (and other half queen)
+        e = this.chess.getPieceAtXY(pos[0] - j, pos[1] - j);
+        if (e.piece === PieceType.bishop && e.color !== p.color && !contact[4]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[4]) {
+          isFreeToMove = false;
+          contact[4] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[4]) contact[4] = true;
+
+        e = this.chess.getPieceAtXY(pos[0] + j, pos[1] - j);
+        if (e.piece === PieceType.bishop && e.color !== p.color && !contact[5]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[5]) {
+          isFreeToMove = false;
+          contact[5] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[5]) contact[5] = true;
+
+        e = this.chess.getPieceAtXY(pos[0] - j, pos[1] + j);
+        if (e.piece === PieceType.bishop && e.color !== p.color && !contact[6]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[6]) {
+          isFreeToMove = false;
+          contact[6] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[6]) contact[6] = true;
+
+        e = this.chess.getPieceAtXY(pos[0] + j, pos[1] + j);
+        if (e.piece === PieceType.bishop && e.color !== p.color && !contact[7]
+          || e.piece === PieceType.queen && e.color !== p.color && !contact[7]) {
+          isFreeToMove = false;
+          contact[7] = true;
+        }
+        else if (e.alive && e.color === p.color && !contact[7]) contact[7] = true;
+      }
+
+      // Knight
+      let e: ChessPiece[] = [
+        this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 2),
+        this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 2),
+        this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 2),
+        this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 2),
+        this.chess.getPieceAtXY(pos[0] + 2, pos[1] + 1),
+        this.chess.getPieceAtXY(pos[0] + 2, pos[1] - 1),
+        this.chess.getPieceAtXY(pos[0] - 2, pos[1] + 1),
+        this.chess.getPieceAtXY(pos[0] - 2, pos[1] - 1),
+      ];
+      for (var j = 0; j < e.length; j++) {
+        if (e[j].piece === PieceType.knight && e[j].color !== p.color) {
+          isFreeToMove = false;
+        }
+      }
+
+      // King
+      e = [
+        this.chess.getPieceAtXY(pos[0], pos[1] - 1),
+        this.chess.getPieceAtXY(pos[0] + 1, pos[1] - 1),
+        this.chess.getPieceAtXY(pos[0] + 1, pos[1]),
+        this.chess.getPieceAtXY(pos[0] + 1, pos[1] + 1),
+        this.chess.getPieceAtXY(pos[0], pos[1] + 1),
+        this.chess.getPieceAtXY(pos[0] - 1, pos[1] + 1),
+        this.chess.getPieceAtXY(pos[0] - 1, pos[1]),
+        this.chess.getPieceAtXY(pos[0] - 1, pos[1] - 1),
+      ];
+      for (var j = 0; j < e.length; j++) {
+        if (e[j].piece === PieceType.king && e[j].color !== p.color) {
+          isFreeToMove = false;
+        }
+      }
+    }
+    return isFreeToMove;
   }
 
   clearMoves() {
