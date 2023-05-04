@@ -23,7 +23,7 @@ export class ChessBoard {
     const i = this.pieces.findIndex(p => p.pos[0] === x && p.pos[1] === y);
 
     if (i === -1)
-      return new ChessPiece;
+      return this.pieces[0];
 
     return this.pieces[i];
   }

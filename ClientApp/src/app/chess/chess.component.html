@@ -26,11 +26,11 @@
         </div>
         <div *ngIf="y == 0">
           <div *ngIf="debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{x}}</div>
-          <div *ngIf="!debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{x + 1}}</div>
+          <div *ngIf="!debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{getXLetter(x)}}</div>
         </div>
         <div *ngIf="x == 0">
           <div *ngIf="debug" style="position: fixed; transform: translate(-0.75em, -1.8em);">{{y}}</div>
-          <div *ngIf="!debug" style="position: fixed; transform: translate(-0.8em, -1.8em);">{{getYLetter(y)}}</div>
+          <div *ngIf="!debug" style="position: fixed; transform: translate(-0.8em, -1.8em);">{{getYLetter(y, true)}}</div>
         </div>
       </td>
     </tr>
