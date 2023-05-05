@@ -13,7 +13,9 @@ This chess game is made with Angular.
     - *skippable* - The King isn't in check
     - *skippable* - The King does not pass through or finish on a square that is under attack
 - [ ] **Check** - Might also require some thinking power to solve
-- [x] **Check Mate** - It shouldn't be possible to make more moves after check mate
+  - [ ] - Detect when a move results in check
+  - [ ] - Make it only possible to protect the king or make the king flee when in check
+- [x] **Check Mate** - It shouldn't be possible to make more moves after king is dead
 - [ ] **Promotion** - When a Pawn moves to the other side and gets promoted to a Queen
   - Underpromotion - *skippable* - The player can choose to "underpromote" to Rook, Bishop or Knight in addition to Queen
 - [ ] **En Passant** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/En_passant)

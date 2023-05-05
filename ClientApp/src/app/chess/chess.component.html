@@ -7,6 +7,7 @@
       <div *ngIf="state != 3">{{chess.getTurnText()}}'s turn</div>
       <div *ngIf="state == 3">{{chess.getTurnText(true)}} won the game!</div>
       <div *ngIf="state == 4">Remi</div>
+      <div>{{getStateText()}}</div>
     </div>
     <div class="chess-info">
       <ul>
@@ -37,16 +38,17 @@
   </table>
   <div class="chess-dead light">
     <div *ngFor="let p of deadLightPieces">
-        <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} dark"></i>
+      <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} dark"></i>
     </div>
   </div>
   <div class="chess-dead dark">
     <div *ngFor="let p of deadDarkPieces">
-        <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} light"></i>
+      <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} light"></i>
     </div>
   </div>
   <div class="info" *ngIf="oldSelected.alive && debug" (click)="test()">
     <div class="info-box">
+      Selected
       <div class="d-flex justify-content-evenly">
         <small>Id: </small><pre>{{oldSelected.id}}</pre>
       </div>

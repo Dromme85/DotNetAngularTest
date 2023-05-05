@@ -21,6 +21,7 @@ export class ChessComponent implements OnInit {
   public deadLightPieces: ChessPiece[] = [];
   public deadDarkPieces: ChessPiece[] = [];
   public state: StateType = StateType.none;
+  public check: boolean = false;
   public notation: string = '';
   public notationIndex: number = 1;
 
@@ -29,6 +30,10 @@ export class ChessComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  getStateText(): string {
+    return StateType[this.state];
   }
 
   cellClick(x: number, y: number) {
@@ -46,14 +51,23 @@ export class ChessComponent implements OnInit {
       return;
     }
 
+    //if (this.state === StateType.check) console.log('Check state confirmed!');
+    //this.check = this.state === StateType.check ? true : false;
+
     if (this.chess.board[x][y]) {
 
       if (this.chess.turn) this.notation = `${this.notationIndex++}. `;
       this.oldSelected.makeMove(x, y);
       this.notation += `${this.getPieceLetter(this.oldSelected.piece)}`;
 
+      if (this.testCheckMove(this.oldSelected)) {
+        this.check = true;
+        this.state = StateType.check;
+        console.log('check');
+      }
+      else this.check = false;
 
-      this.state = StateType.move;
+      if (this.state !== StateType.check) this.state = StateType.move;
       if (p.alive && p.color !== this.oldSelected.color) {
         // TODO: This is temporary, check mate should be set because the king can't flee or be protected
         this.state = p.piece === PieceType.king ? StateType.mate : StateType.kill;
@@ -71,7 +85,7 @@ export class ChessComponent implements OnInit {
         }
       }
 
-      if (this.testCheckMove(this.oldSelected) && this.state !== StateType.mate) {
+      if (this.check && this.state !== StateType.mate) {
         this.state = StateType.check;
         this.notation += '+';
       }
@@ -85,8 +99,8 @@ export class ChessComponent implements OnInit {
       this.notation = '';
 
       this.chess.nextTurn();
-      this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color);
-      this.deadDarkPieces = this.chess.pieces.filter(p => !p.alive && !p.color);
+      this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color && p.id !== 0);
+      this.deadDarkPieces = this.chess.pieces.filter(p => !p.alive && !p.color && p.id !== 0);
     }
 
     if (p.alive && p.color === this.chess.turn) {
@@ -192,6 +206,12 @@ export class ChessComponent implements OnInit {
             break;
           default: break;
         }
+
+        //if (pamp.piece === PieceType.king && pamp.color !== p.color) {
+        //if (this.testCheckMove(p)) {
+        //  this.state = StateType.check;
+        //  console.log('State -> Check!');
+        //}
 
       }
     }
@@ -460,7 +480,7 @@ export class ChessComponent implements OnInit {
       }
 
       // Rook (and half queen)
-      let contact: boolean[] = [false, false, false, false, false, false, false];
+      let contact: boolean[] = [false, false, false, false, false, false, false, false];
       for (let j = 1; j < 8; j++) {
         let e = this.chess.getPieceAtXY(pos[0], pos[1] + j);
         if (e.piece === PieceType.rook && e.color !== p.color && !contact[0]
@@ -568,6 +588,22 @@ export class ChessComponent implements OnInit {
   testCheckMove(p: ChessPiece): boolean {
 
     // TODO: check if 'p' can kill the king
+    let pam = p.availableMoves();
+
+    for (var i = 0; i < pam.length; i++) {
+      let pamp = this.chess.getPieceAtPos(pam[i].newPos);
+      if (pamp.piece === PieceType.king && pamp.color !== p.color) {
+        // test the position
+        switch (p.piece) {
+          case PieceType.pawn: return this.testPawnMove(p, pamp, pamp.pos);
+          case PieceType.rook: return this.testRookMove(p, pamp.pos, [false, false, false, false]);
+          case PieceType.bishop: return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
+          case PieceType.knight: return this.testKnightMove(p, pamp, pamp.pos);
+          case PieceType.queen: return this.testQueenMove(p, pamp.pos, [false, false, false, false, false, false, false, false]);
+          case PieceType.king: return this.testKingMove(p, pamp, pamp.pos);
+        }
+      }
+    }
 
     return false;
   }
@@ -651,11 +687,11 @@ export class ChessComponent implements OnInit {
 
     // Test Pieces
     if (this.debug) {
-      p = new PieceQueen({ alive: true, piece: PieceType.queen, color: true, pos: [3, 3] });
-      this.chess.pieces.push(p);
-      p = new PieceKnight({ alive: true, piece: PieceType.knight, color: false, pos: [6, 5] });
-      this.chess.pieces.push(p);
-      p = new PieceKing({ alive: true, piece: PieceType.king, color: false, pos: [3, 5] });
+      //p = new PieceQueen({ alive: true, piece: PieceType.queen, color: true, pos: [3, 3] });
+      //this.chess.pieces.push(p);
+      //p = new PieceKnight({ alive: true, piece: PieceType.knight, color: false, pos: [6, 5] });
+      //this.chess.pieces.push(p);
+      p = new PieceKing({ alive: true, piece: PieceType.king, color: false, pos: [3, 3] });
       this.chess.pieces.push(p);
     }
   }
