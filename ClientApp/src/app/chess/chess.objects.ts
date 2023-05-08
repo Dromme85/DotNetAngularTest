@@ -60,7 +60,7 @@ export class ChessMove {
 }
 
 export enum StateType {
-  move, castle, kill, check, mate, draw, stale, none = -1
+  move, castle, kill, promotion, check, mate, draw, stale, none = -1
 }
 
 export enum PieceType {
@@ -457,7 +457,10 @@ export class PieceKing extends ChessPiece {
         this.pos = pos;
       }
     }
-    if (!this.hasMoved) this.hasMoved = true;
+    if (!this.hasMoved) {
+      this.hasMoved = true;
+      console.log('King has moved!');
+    }
   }
 }
 
@@ -510,5 +513,51 @@ export class PiecePawn extends ChessPiece {
         this.firstMove = false;
       }
     }
+  }
+}
+
+export class ChessNotation {
+  notations: [StateType, string][] = []
+
+  addNotation(n: StateType, s: string = '') {
+    this.notations.push([n, s]);
+  }
+
+  getNotationText(): string {
+    let result = '';
+    for (var i = 0; i < this.notations.length; i++) {
+      switch (this.notations[i][0]) {
+        case StateType.move: // Pa1
+          result += this.notations[i][1];
+          break;
+        case StateType.castle: // O-O or O-O-O
+          result += this.notations[i][1];
+          break;
+        case StateType.kill: // x
+          result = 'x' + result;
+          break;
+        case StateType.promotion: // x
+          result += 'Q';
+          break;
+        case StateType.check: // +
+          result += '+';
+          break;
+        case StateType.mate: // # 1-0 or 0-1
+          result += this.notations[i][1];
+          break;
+        case StateType.draw: // ½-½
+          result += ' ½-½';
+          break;
+        case StateType.stale:
+          result += ' 0-0';
+          break;
+        default: break;
+      }
+    }
+    return result;
+  }
+
+  resetNotation() {
+    this.notations = [];
   }
 }
