@@ -60,7 +60,7 @@ export class ChessMove {
 }
 
 export enum StateType {
-  move, kill, check, mate, draw, stale, none = -1
+  move, castle, kill, check, mate, draw, stale, none = -1
 }
 
 export enum PieceType {
@@ -435,11 +435,21 @@ export class PieceKing extends ChessPiece {
       m.push(new ChessMove(cm));
     }
 
+    // Castling move (this only checks if the King has moved before)
+    if (!this.hasMoved) {
+      mp = [this.pos[0] - 2, this.pos[1]];
+      cm.newPos = mp;
+      m.push(new ChessMove(cm));
+
+      mp = [this.pos[0] + 2, this.pos[1]];
+      cm.newPos = mp;
+      m.push(new ChessMove(cm));
+    }
+
     return m;
   }
 
   makeMove(x: number, y: number) {
-    if (!this.hasMoved) this.hasMoved = true;
     var pos: number[] = [x, y];
     var m = this.availableMoves();
     for (var i = 0; i < m.length; i++) {
@@ -447,6 +457,7 @@ export class PieceKing extends ChessPiece {
         this.pos = pos;
       }
     }
+    if (!this.hasMoved) this.hasMoved = true;
   }
 }
 

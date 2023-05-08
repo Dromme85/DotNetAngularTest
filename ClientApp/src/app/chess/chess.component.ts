@@ -58,6 +58,19 @@ export class ChessComponent implements OnInit {
 
       if (this.chess.turn) this.notation = `${this.notationIndex++}. `;
       this.oldSelected.makeMove(x, y);
+      // Castling
+      if (x === 6) console.log('Trying to move king to g1', this.oldSelected);
+      if (this.state === StateType.castle && this.oldSelected.piece === PieceType.king) {
+        if (this.oldSelected.pos[0] === 6) {
+          let c = this.chess.getPieceAtPos([7, this.oldSelected.pos[1]]);
+          c.makeMove(5, this.oldSelected.pos[1]);
+        }
+        else if (this.oldSelected.pos[0] === 2) {
+          let c = this.chess.getPieceAtPos([0, this.oldSelected.pos[1]]);
+          c.makeMove(3, this.oldSelected.pos[1]);
+        }
+        // Some notation here?
+      }
       this.notation += `${this.getPieceLetter(this.oldSelected.piece)}`;
 
       if (this.testCheckMove(this.oldSelected)) {
@@ -68,6 +81,7 @@ export class ChessComponent implements OnInit {
       else this.check = false;
 
       if (this.state !== StateType.check) this.state = StateType.move;
+
       if (p.alive && p.color !== this.oldSelected.color) {
         // TODO: This is temporary, check mate should be set because the king can't flee or be protected
         this.state = p.piece === PieceType.king ? StateType.mate : StateType.kill;
@@ -202,7 +216,7 @@ export class ChessComponent implements OnInit {
             this.chess.board[pos[0]][pos[1]] = this.testQueenMove(p, pos, enemyFound);
             break;
           case PieceType.king:
-            this.chess.board[pos[0]][pos[1]] = this.testKingMove(p, pamp, pos);
+            this.chess.board[pos[0]][pos[1]] = this.testKingMove(p as PieceKing, pamp, pos);
             break;
           default: break;
         }
@@ -463,14 +477,27 @@ export class ChessComponent implements OnInit {
     return isFreeToMove;
   }
 
-  testKingMove(p: ChessPiece, pamp: ChessPiece, pos: number[]): boolean {
+  testKingMove(p: PieceKing, pamp: ChessPiece, pos: number[]): boolean {
     let isFreeToMove = true;
 
     if (pamp.alive && pamp.color === p.color)
       isFreeToMove = false;
 
+
     // Make sure the king cant check mate himself!
     else if (!pamp.alive) {
+      // Castling
+      if (!p.hasMoved) {
+        let rr = this.chess.getPieceAtPos([7, p.pos[1]]) as PieceRook;
+        let lr = this.chess.getPieceAtPos([0, p.pos[1]]) as PieceRook;
+        if (rr.piece === PieceType.rook && !rr.hasMoved) {
+          this.state = StateType.castle;
+        }
+        else if (lr.piece === PieceType.rook && !lr.hasMoved) {
+          this.state = StateType.castle;
+        }
+      }
+
       // Pawn
       let e1 = this.chess.getPieceAtXY(pos[0] + 1, p.color ? pos[1] - 1 : pos[1] + 1);
       let e2 = this.chess.getPieceAtXY(pos[0] - 1, p.color ? pos[1] - 1 : pos[1] + 1);
@@ -600,7 +627,7 @@ export class ChessComponent implements OnInit {
           case PieceType.bishop: return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
           case PieceType.knight: return this.testKnightMove(p, pamp, pamp.pos);
           case PieceType.queen: return this.testQueenMove(p, pamp.pos, [false, false, false, false, false, false, false, false]);
-          case PieceType.king: return this.testKingMove(p, pamp, pamp.pos);
+          case PieceType.king: return this.testKingMove(p as PieceKing, pamp, pamp.pos);
         }
       }
     }
@@ -652,8 +679,8 @@ export class ChessComponent implements OnInit {
     this.chess.pieces.push(p);
     p = new PieceKnight({ alive: true, piece: PieceType.knight, color: true, pos: [1, 7] });
     this.chess.pieces.push(p);
-    p = new PieceKnight({ alive: true, piece: PieceType.knight, color: true, pos: [6, 7] });
-    this.chess.pieces.push(p);
+    //p = new PieceKnight({ alive: true, piece: PieceType.knight, color: true, pos: [6, 7] });
+    //this.chess.pieces.push(p);
 
     // Bishops
     p = new PieceBishop({ alive: true, piece: PieceType.bishop, color: false, pos: [2, 0] });
@@ -662,8 +689,8 @@ export class ChessComponent implements OnInit {
     this.chess.pieces.push(p);
     p = new PieceBishop({ alive: true, piece: PieceType.bishop, color: true, pos: [2, 7] });
     this.chess.pieces.push(p);
-    p = new PieceBishop({ alive: true, piece: PieceType.bishop, color: true, pos: [5, 7] });
-    this.chess.pieces.push(p);
+    //p = new PieceBishop({ alive: true, piece: PieceType.bishop, color: true, pos: [5, 7] });
+    //this.chess.pieces.push(p);
 
     // Queens
     p = new PieceQueen({ alive: true, piece: PieceType.queen, color: false, pos: [3, 0] });

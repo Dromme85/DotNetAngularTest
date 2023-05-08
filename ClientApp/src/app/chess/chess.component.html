@@ -26,12 +26,16 @@
           <div [ngClass]="{ move: chess.board[x][y] }"></div>
         </div>
         <div *ngIf="y == 0">
-          <div *ngIf="debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{x}}</div>
-          <div *ngIf="!debug" style="position: fixed; transform: translate(.75em, -3.3em);">{{getXLetter(x)}}</div>
+          <div style="position: fixed; transform: translate(.75em, -3.3em);">{{getXLetter(x)}}</div>
         </div>
         <div *ngIf="x == 0">
-          <div *ngIf="debug" style="position: fixed; transform: translate(-0.75em, -1.8em);">{{y}}</div>
-          <div *ngIf="!debug" style="position: fixed; transform: translate(-0.8em, -1.8em);">{{getYLetter(y, true)}}</div>
+          <div style="position: fixed; transform: translate(-0.8em, -1.8em);">{{getYLetter(y, true)}}</div>
+        </div>
+        <div *ngIf="debug && y == 7">
+          <div *ngIf="debug" style="position: fixed; transform: translate(.75em, -.3em); color: white; ">{{x}}</div>
+        </div>
+        <div *ngIf="debug && x == 7">
+          <div *ngIf="debug" style="position: fixed; transform: translate(2.2em, -1.8em); color: white;">{{y}}</div>
         </div>
       </td>
     </tr>
