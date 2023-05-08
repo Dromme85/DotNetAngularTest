@@ -4,7 +4,7 @@ This chess game is made with Angular.
 
 ## Missing Features
 
-- [ ] **Castling** (sv. Rockad) - Might take some thinking power to solve, because of all the special rules
+- [x] **Castling** (sv. Rockad) - Might take some thinking power to solve, because of all the special rules
   - Short castling - A castle made on the kingside when the King moves to G and the Rook to F
   - Long castling - A castle made on the queenside when the King moves to C and the Rook to D
   - A castle can be made if:
@@ -13,10 +13,10 @@ This chess game is made with Angular.
     - *skippable* - The King isn't in check
     - *skippable* - The King does not pass through or finish on a square that is under attack
 - [ ] **Check** - Might also require some thinking power to solve
-  - [ ] - Detect when a move results in check
+  - [x] - Detect when a move results in check
   - [ ] - Make it only possible to protect the king or make the king flee when in check
 - [x] **Check Mate** - It shouldn't be possible to make more moves after king is dead
-- [ ] **Promotion** - When a Pawn moves to the other side and gets promoted to a Queen
+- [x] **Promotion** - When a Pawn moves to the other side and gets promoted to a Queen
   - Underpromotion - *skippable* - The player can choose to "underpromote" to Rook, Bishop or Knight in addition to Queen
 - [ ] **En Passant** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/En_passant)
   - A pawn can kill an enemy pawn that has moved two square by attacking the passed square
