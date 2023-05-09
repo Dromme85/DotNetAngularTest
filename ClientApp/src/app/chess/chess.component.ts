@@ -13,7 +13,7 @@ import {
 
 export class ChessComponent implements OnInit {
 
-  public debug: boolean = true;
+  public debug: boolean = false;
 
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
@@ -22,8 +22,9 @@ export class ChessComponent implements OnInit {
   public deadDarkPieces: ChessPiece[] = [];
   public state: StateType = StateType.none;
   public check: boolean = false;
-  public notation: string = '';
+  public notationString: string = '';
   public notationIndex: number = 1;
+  public notation: ChessNotation = new ChessNotation;
 
   constructor() {
     this.resetBoard();
@@ -56,21 +57,25 @@ export class ChessComponent implements OnInit {
 
     if (this.chess.board[x][y] && this.oldSelected !== p) {
 
-      if (this.chess.turn) this.notation = `${this.notationIndex++}. `;
+      let pawnOldPos: number[] = this.oldSelected.piece === PieceType.pawn ? this.oldSelected.pos: [-1, -1];
+
       this.oldSelected.makeMove(x, y);
       // Castling
       if (this.state === StateType.castle && this.oldSelected.piece === PieceType.king) {
+        // Kingside
         if (this.oldSelected.pos[0] === 6) {
           let c = this.chess.getPieceAtPos([7, this.oldSelected.pos[1]]);
           c.makeMove(5, this.oldSelected.pos[1]);
+          this.notation.add(StateType.castle, ' O-O');
         }
+        // Queenside
         else if (this.oldSelected.pos[0] === 2) {
           let c = this.chess.getPieceAtPos([0, this.oldSelected.pos[1]]);
           c.makeMove(3, this.oldSelected.pos[1]);
+          this.notation.add(StateType.castle, ' O-O-O');
         }
-        // Some notation here?
       }
-      this.notation += `${this.getPieceLetter(this.oldSelected.piece)}`;
+      this.notation.add(StateType.piece, `${this.getPieceLetter(this.oldSelected.piece)}`);
 
       if (this.testCheckMove(this.oldSelected)) {
         this.check = true;
@@ -83,32 +88,37 @@ export class ChessComponent implements OnInit {
       if (p.alive && p.color !== this.oldSelected.color) {
         // TODO: This is temporary, check mate should be set because the king can't flee or be protected
         this.state = p.piece === PieceType.king ? StateType.mate : StateType.kill;
-        this.notation += this.state === StateType.kill ? 'x' : '';
+        if (this.state === StateType.kill)
+          this.notation.add(this.state);
+
+        if (this.oldSelected.piece === PieceType.pawn)
+          this.notation.add(StateType.piece, this.getXLetter(pawnOldPos[0]).toLowerCase());
+
         p.alive = false;
         p.pos = [];
       }
-      this.notation += `${this.getXLetter(this.oldSelected.pos[0]).toLowerCase() }${this.getYLetter(this.oldSelected.pos[1], true)}`;
+      this.notation.add(StateType.move, `${this.getXLetter(this.oldSelected.pos[0]).toLowerCase() }${this.getYLetter(this.oldSelected.pos[1], true)}`);
 
       if (this.oldSelected.piece === PieceType.pawn) {
         if (this.oldSelected.pos[1] === 0 || this.oldSelected.pos[1] === 7) {
           let i = this.chess.pieces.findIndex(op => op.id === this.oldSelected.id);
           this.chess.pieces[i] = new PieceQueen({ alive: true, piece: PieceType.queen, color: this.oldSelected.color, pos: this.oldSelected.pos });
-          this.notation += 'Q';
+          this.notation.add(StateType.promotion);
         }
       }
 
       if (this.check && this.state !== StateType.mate) {
         this.state = StateType.check;
-        this.notation += '+';
+        this.notation.add(this.state);
       }
 
       if (this.state === StateType.mate) {
-        this.notation += `# ${this.chess.turn ? '1-0' : '0-1'}`;
+        this.notation.add(this.state, `# ${this.chess.turn ? '1-0' : '0-1'}`);
       }
 
-      if (this.chess.turn) this.moves.unshift(this.notation);
-      else this.moves[0] += ' ' + this.notation;
-      this.notation = '';
+      if (this.chess.turn) this.moves.unshift(`${this.notationIndex++}. ${this.notation.getText()}`);
+      else this.moves[0] += ' ' + this.notation.getText();
+      this.notation.reset();
 
       this.chess.nextTurn();
       this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color && p.id !== 0);

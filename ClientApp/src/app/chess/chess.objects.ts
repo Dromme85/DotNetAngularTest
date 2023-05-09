@@ -60,7 +60,7 @@ export class ChessMove {
 }
 
 export enum StateType {
-  move, castle, kill, promotion, check, mate, draw, stale, none = -1
+  piece, kill, move, promotion, castle, check, mate, draw, stale, none = -1
 }
 
 export enum PieceType {
@@ -519,22 +519,26 @@ export class PiecePawn extends ChessPiece {
 export class ChessNotation {
   notations: [StateType, string][] = []
 
-  addNotation(n: StateType, s: string = '') {
+  add(n: StateType, s: string = '') {
     this.notations.push([n, s]);
   }
 
-  getNotationText(): string {
+  getText(): string {
     let result = '';
+    this.notations.sort((a, b) => a[0] as number - b[0] as number)
     for (var i = 0; i < this.notations.length; i++) {
       switch (this.notations[i][0]) {
-        case StateType.move: // Pa1
+        case StateType.move: // a1
+          result += this.notations[i][1];
+          break;
+        case StateType.piece: // P
           result += this.notations[i][1];
           break;
         case StateType.castle: // O-O or O-O-O
           result += this.notations[i][1];
           break;
         case StateType.kill: // x
-          result = 'x' + result;
+          result += 'x';
           break;
         case StateType.promotion: // x
           result += 'Q';
@@ -557,7 +561,7 @@ export class ChessNotation {
     return result;
   }
 
-  resetNotation() {
+  reset() {
     this.notations = [];
   }
 }

@@ -55,7 +55,7 @@
     position: fixed;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
     height: 40vh;
   }
     .chess-body .chess-dead i {
@@ -64,12 +64,12 @@
 
     .chess-body .chess-dead.light {
       transform: translate(-50vh, 50%);
-      flex-direction: column-reverse;
+      flex-direction: column;
     }
 
     .chess-body .chess-dead.dark {
       transform: translate(50vh, -50%);
-      flex-direction: column;
+      flex-direction: column-reverse;
     }
 
   .chess-body table {

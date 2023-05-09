@@ -20,7 +20,7 @@ This chess game is made with Angular.
   - Underpromotion - *skippable* - The player can choose to "underpromote" to Rook, Bishop or Knight in addition to Queen
 - [ ] **En Passant** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/En_passant)
   - A pawn can kill an enemy pawn that has moved two square by attacking the passed square
-- [ ] **(Figurine) Algebraic Notation** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
+- [x] **(Figurine) Algebraic Notation** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
   - The standard method for recording and describing the moves in a game of chess
 - [ ] **Reset/Give Up** - Button to reset the board should be added
 - [ ] **Save State** - Game shouldn't be reset on page refresh
