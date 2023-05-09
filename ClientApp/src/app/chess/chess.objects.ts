@@ -60,7 +60,7 @@ export class ChessMove {
 }
 
 export enum StateType {
-  piece, kill, move, promotion, castle, check, mate, draw, stale, none = -1
+  piece, kill, move, promotion, castle, check, mate, draw, stale, forfeit, none = -1
 }
 
 export enum PieceType {
@@ -76,6 +76,7 @@ export class ChessPiece {
   pos: number[] = [];
   alive: boolean = false;
   selected: boolean = false;
+  hasMoved: boolean = false;
 
   availableMoves(): ChessMove[] { return [] }
 
@@ -96,8 +97,6 @@ export class ChessPiece {
 }
 
 export class PieceRook extends ChessPiece {
-
-  hasMoved: boolean = false;
 
   availableMoves(): ChessMove[] {
     var m: ChessMove[] = [];
@@ -379,8 +378,6 @@ export class PieceQueen extends ChessPiece {
 }
 
 export class PieceKing extends ChessPiece {
-
-  hasMoved: boolean = false;
 
   availableMoves(): ChessMove[] {
     var m: ChessMove[] = [];

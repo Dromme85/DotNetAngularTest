@@ -28,6 +28,8 @@ export class ChessComponent implements OnInit {
 
   constructor() {
     this.resetBoard();
+
+    this.loadBoard();
   }
 
   ngOnInit(): void {
@@ -35,6 +37,10 @@ export class ChessComponent implements OnInit {
 
   getStateText(): string {
     return StateType[this.state];
+  }
+
+  forfeit() {
+    this.state = StateType.forfeit;
   }
 
   cellClick(x: number, y: number) {
@@ -130,47 +136,6 @@ export class ChessComponent implements OnInit {
       this.oldSelected.selected = false;
     }
 
-  }
-
-  getXLetter(y: number, reverse: boolean = false): string {
-    switch (y) {
-      case 0: return reverse ? 'H' : 'A';
-      case 1: return reverse ? 'G' : 'B';
-      case 2: return reverse ? 'F' : 'C';
-      case 3: return reverse ? 'E' : 'D';
-      case 4: return reverse ? 'D' : 'E';
-      case 5: return reverse ? 'C' : 'F';
-      case 6: return reverse ? 'B' : 'G';
-      case 7: return reverse ? 'A' : 'H';
-      default: return '';
-    }
-  }
-
-  getYLetter(y: number, reverse: boolean = false): string {
-    switch (y) {
-      case 0: return reverse ? '8' : '1';
-      case 1: return reverse ? '7' : '2';
-      case 2: return reverse ? '6' : '3';
-      case 3: return reverse ? '5' : '4';
-      case 4: return reverse ? '4' : '5';
-      case 5: return reverse ? '3' : '6';
-      case 6: return reverse ? '2' : '7';
-      case 7: return reverse ? '1' : '8';
-      default: return '';
-    }
-  }
-
-  getPieceLetter(p: PieceType): string {
-    switch (p) {
-      case PieceType.pawn: return '';
-      case PieceType.rook: return 'R';
-      case PieceType.knight: return 'N';
-      case PieceType.bishop: return 'B';
-      case PieceType.queen: return 'Q';
-      case PieceType.king: return 'K';
-      case PieceType.none: return '';
-      default: return '';
-    }
   }
 
   test() {
@@ -278,6 +243,7 @@ export class ChessComponent implements OnInit {
         else if (checkp.alive)
           isFreeToMove = false;
       }
+
     }
     // East
     else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
@@ -525,7 +491,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[0] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[0]) contact[0] = true;
+        else if (e.alive && !contact[0]) contact[0] = true;
 
         e = this.chess.getPieceAtXY(pos[0], pos[1] - j);
         if (e.piece === PieceType.rook && e.color !== p.color && !contact[1]
@@ -533,7 +499,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[1] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[1]) contact[1] = true;
+        else if (e.alive && !contact[1]) contact[1] = true;
 
         e = this.chess.getPieceAtXY(pos[0] + j, pos[1]);
         if (e.piece === PieceType.rook && e.color !== p.color && !contact[2]
@@ -541,7 +507,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[2] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[2]) contact[2] = true;
+        else if (e.alive && !contact[2]) contact[2] = true;
 
         e = this.chess.getPieceAtXY(pos[0] - j, pos[1]);
         if (e.piece === PieceType.rook && e.color !== p.color && !contact[3]
@@ -549,7 +515,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[3] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[3]) contact[3] = true;
+        else if (e.alive && !contact[3]) contact[3] = true;
 
         // Bishop (and other half queen)
         e = this.chess.getPieceAtXY(pos[0] - j, pos[1] - j);
@@ -558,7 +524,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[4] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[4]) contact[4] = true;
+        else if (e.alive && !contact[4]) contact[4] = true;
 
         e = this.chess.getPieceAtXY(pos[0] + j, pos[1] - j);
         if (e.piece === PieceType.bishop && e.color !== p.color && !contact[5]
@@ -566,7 +532,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[5] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[5]) contact[5] = true;
+        else if (e.alive && !contact[5]) contact[5] = true;
 
         e = this.chess.getPieceAtXY(pos[0] - j, pos[1] + j);
         if (e.piece === PieceType.bishop && e.color !== p.color && !contact[6]
@@ -574,7 +540,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[6] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[6]) contact[6] = true;
+        else if (e.alive && !contact[6]) contact[6] = true;
 
         e = this.chess.getPieceAtXY(pos[0] + j, pos[1] + j);
         if (e.piece === PieceType.bishop && e.color !== p.color && !contact[7]
@@ -582,7 +548,7 @@ export class ChessComponent implements OnInit {
           isFreeToMove = false;
           contact[7] = true;
         }
-        else if (e.alive && e.color === p.color && !contact[7]) contact[7] = true;
+        else if (e.alive && !contact[7]) contact[7] = true;
       }
 
       // Knight
@@ -730,12 +696,140 @@ export class ChessComponent implements OnInit {
 
     // Test Pieces
     if (this.debug) {
-      //p = new PieceQueen({ alive: true, piece: PieceType.queen, color: true, pos: [3, 3] });
-      //this.chess.pieces.push(p);
-      //p = new PieceKnight({ alive: true, piece: PieceType.knight, color: false, pos: [6, 5] });
-      //this.chess.pieces.push(p);
-      p = new PieceKing({ alive: true, piece: PieceType.king, color: false, pos: [3, 3] });
+      p = new PiecePawn({ alive: true, piece: PieceType.pawn, color: true, pos: [4, 4] });
       this.chess.pieces.push(p);
+      p = new PieceKnight({ alive: true, piece: PieceType.knight, color: true, pos: [3, 2] });
+      this.chess.pieces.push(p);
+      p = new PieceRook({ alive: true, piece: PieceType.rook, color: true, pos: [5, 5] });
+      this.chess.pieces.push(p);
+    }
+  }
+
+  saveBoard(): boolean {
+
+    return false;
+  }
+
+  loadBoard(): boolean {
+    let notes: string[] = ["1. Nf3 Nf6", "2. c4 g6", "3. Nc3 Bg7"];
+    console.log('LoadBoard() started!');
+    for (var i = 0; i < notes.length; i++) {
+
+      this.moves.unshift(notes[i]);
+
+      let n = notes[i].split(' ');
+      for (var j = 0; j < n.length; j++) {
+        let p: PieceType = PieceType.pawn;
+        let pos: number[] = [];
+        for (var k = 0; k < n[j].length; k++) {
+          let c = n[j][k];
+          //console.log(`inner loop ${j}, regexp follows `, c);
+          if (c.match(/[RNBQK]/)) {
+            console.log(`Piece found: ${PieceType[this.getPieceType(c)]}`);
+            p = this.getPieceType(c);
+          }
+          else if (c.match(/[a-h]/)) {
+            if (n[j][k + 1] === 'x') {
+              console.log('Pawn kill');
+            }
+            else {
+              console.log(`Pos found: ${c}${n[j][k + 1]}`);
+              pos = [this.getXPos(c), this.getYPos(n[j][k + 1])];
+            }
+          }
+        }
+
+        if (pos[0] !== undefined) {
+
+          // TODO: Add move logic here, need to find the specific piece that can move to 'pos'
+          console.log(`${PieceType[p]} moves to [${pos[0]}, ${pos[1]}]`);
+        }
+
+        //this.chess.pieces[0].makeMove()
+      }
+    }
+
+    return false;
+  }
+
+
+  getXLetter(y: number, reverse: boolean = false): string {
+    switch (y) {
+      case 0: return reverse ? 'H' : 'A';
+      case 1: return reverse ? 'G' : 'B';
+      case 2: return reverse ? 'F' : 'C';
+      case 3: return reverse ? 'E' : 'D';
+      case 4: return reverse ? 'D' : 'E';
+      case 5: return reverse ? 'C' : 'F';
+      case 6: return reverse ? 'B' : 'G';
+      case 7: return reverse ? 'A' : 'H';
+      default: return '';
+    }
+  }
+
+  getYLetter(y: number, reverse: boolean = false): string {
+    switch (y) {
+      case 0: return reverse ? '8' : '1';
+      case 1: return reverse ? '7' : '2';
+      case 2: return reverse ? '6' : '3';
+      case 3: return reverse ? '5' : '4';
+      case 4: return reverse ? '4' : '5';
+      case 5: return reverse ? '3' : '6';
+      case 6: return reverse ? '2' : '7';
+      case 7: return reverse ? '1' : '8';
+      default: return '';
+    }
+  }
+
+  getPieceLetter(p: PieceType): string {
+    switch (p) {
+      case PieceType.pawn: return '';
+      case PieceType.rook: return 'R';
+      case PieceType.knight: return 'N';
+      case PieceType.bishop: return 'B';
+      case PieceType.queen: return 'Q';
+      case PieceType.king: return 'K';
+      case PieceType.none: return '';
+      default: return '';
+    }
+  }
+
+  getPieceType(p: string): PieceType {
+    switch (p) {
+      case 'R': return PieceType.rook;
+      case 'N': return PieceType.knight;
+      case 'B': return PieceType.bishop;
+      case 'Q': return PieceType.queen;
+      case 'K': return PieceType.king;
+      default: return PieceType.none;
+    }
+  }
+
+  getXPos(x: string): number {
+    switch (x) {
+      case 'a': return 0;
+      case 'b': return 1;
+      case 'c': return 2;
+      case 'd': return 3;
+      case 'e': return 4;
+      case 'f': return 5;
+      case 'g': return 6;
+      case 'h': return 7;
+      default: return -1;
+    }
+  }
+
+  getYPos(y: string): number {
+    switch (y) {
+      case '8': return 0;
+      case '7': return 1;
+      case '6': return 2;
+      case '5': return 3;
+      case '4': return 4;
+      case '3': return 5;
+      case '2': return 6;
+      case '1': return 7;
+      default: return -1;
     }
   }
 
