@@ -150,3 +150,9 @@ i.dark {
   margin-bottom: .5rem;
   box-shadow: 0 4px 8px 0 #00000033, 0 6px 20px 0 #00000044;
 }
+
+.btn-area {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}

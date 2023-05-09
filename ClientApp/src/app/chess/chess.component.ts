@@ -13,7 +13,7 @@ import {
 
 export class ChessComponent implements OnInit {
 
-  public debug: boolean = false;
+  public debug: boolean = true;
 
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
@@ -52,9 +52,6 @@ export class ChessComponent implements OnInit {
       return;
     }
 
-    //if (this.state === StateType.check) console.log('Check state confirmed!');
-    //this.check = this.state === StateType.check ? true : false;
-
     if (this.chess.board[x][y] && this.oldSelected !== p) {
 
       let pawnOldPos: number[] = this.oldSelected.piece === PieceType.pawn ? this.oldSelected.pos: [-1, -1];
@@ -86,7 +83,7 @@ export class ChessComponent implements OnInit {
       if (this.state !== StateType.check) this.state = StateType.move;
 
       if (p.alive && p.color !== this.oldSelected.color) {
-        // TODO: This is temporary, check mate should be set because the king can't flee or be protected
+        // TODO: This is temporary, check mate should be set because the king can't flee or be protected, not killed
         this.state = p.piece === PieceType.king ? StateType.mate : StateType.kill;
         if (this.state === StateType.kill)
           this.notation.add(this.state);
@@ -228,12 +225,6 @@ export class ChessComponent implements OnInit {
             break;
           default: break;
         }
-
-        //if (pamp.piece === PieceType.king && pamp.color !== p.color) {
-        //if (this.testCheckMove(p)) {
-        //  this.state = StateType.check;
-        //  console.log('State -> Check!');
-        //}
 
       }
     }
@@ -665,6 +656,12 @@ export class ChessComponent implements OnInit {
   resetBoard() {
     // width, height, piece size (rem)
     this.chess.size = [8, 8, 2.5];
+    this.chess.turn = true;
+    this.moves = [];
+    this.deadLightPieces = [];
+    this.deadDarkPieces = [];
+    this.state = StateType.none;
+    this.check = false;
 
     for (var i = 0; i < this.chess.size[0]; i++) {
       this.chess.board[i] = [];
