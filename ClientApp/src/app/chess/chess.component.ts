@@ -725,7 +725,7 @@ export class ChessComponent implements OnInit {
       "36. Kf1 Ng3+", "37. Ke1 Bb4+", "38. Kd1 Bb3+", "39. Kc1 Ne2+", "40. Kb1 Nc3+",
       "41. Kc1 Rc2# 0-1",
     ];
-    console.log('LoadBoard() started!');
+    //console.log('LoadBoard() started!');
     for (var i = 0; i < notes.length; i++) {
 
       this.moves.unshift(notes[i]);
@@ -736,27 +736,27 @@ export class ChessComponent implements OnInit {
         let pos: number[] = [];
         let sl: string = '';
         if (this.state === StateType.none) {
-          console.warn('Working on', n[j]);
+          //console.warn('Working on', n[j]);
           this.notationIndex = +n[0].trimEnd() + 1;
           let c = n[j][0];
           if (c.match(/[RNBQK]/)) {
-            console.log(`Piece found: ${PieceType[this.getPieceType(c)]}`);
+            //console.log(`Piece found: ${PieceType[this.getPieceType(c)]}`);
             pt = this.getPieceType(c);
             if (n[j][1] === 'x') {
               this.state = StateType.kill;
               pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
-              console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
+              //console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
             }
             else if (n[j][1].match(/[a-h]/)) {
               this.state = StateType.move;
               if (n[j][2].match(/[a-h]/)) {
                 pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
                 sl = n[j][1];
-                console.log(`Pos found: ${sl}(${this.getXPos(sl)})${n[j][2]}${n[j][3]}`);
+                //console.log(`Pos found: ${sl}(${this.getXPos(sl)})${n[j][2]}${n[j][3]}`);
               }
               else {
                 pos = [this.getXPos(n[j][1]), this.getYPos(n[j][2])];
-                console.log(`Pos found: ${n[j][1]}${n[j][2]}`);
+                //console.log(`Pos found: ${n[j][1]}${n[j][2]}`);
               }
 
             }
@@ -765,26 +765,26 @@ export class ChessComponent implements OnInit {
             if (n[j][1] === 'x') {
               this.state = StateType.kill;
               pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
-              console.log('Pawn kill', pos);
+              //console.log('Pawn kill', pos);
             }
             else if (n[j][1].match(/[1-8]/)) {
               this.state = StateType.move;
-              console.log(`Pawn Pos found: ${c}${n[j][1]}`);
+              //console.log(`Pawn Pos found: ${c}${n[j][1]}`);
               pos = [this.getXPos(c), this.getYPos(n[j][1])];
             }
           }
           else if (n[j] === 'O-O' || n[j] === 'O-O-O') {
             this.state = StateType.castle;
-            console.log('Castling found', n[j]);
+            //console.log('Castling found', n[j]);
           }
           else {
 
           }
-          if (this.state === StateType.kill) console.log('State:', StateType[this.state]);
+          //if (this.state === StateType.kill) console.log('State:', StateType[this.state]);
         }
 
         let pid = -1;
-        console.log('Current State:', StateType[this.state]);
+        //console.log('Current State:', StateType[this.state]);
 
         if (pos[0] !== undefined) {
 
@@ -802,7 +802,7 @@ export class ChessComponent implements OnInit {
                   pid = pam.pieceId;
                   m = pams.length;
                   l = pieces.length;
-                  console.log('Pawn kill id:', pid);
+                  //console.log('Pawn kill id:', pid);
                 }
                 else if (this.state === StateType.move && pam.oldPos[0] === pam.newPos[0]
                   && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
@@ -813,7 +813,6 @@ export class ChessComponent implements OnInit {
               }
               else {
                 if (this.state === StateType.move && sl !== '') {
-                  console.log('Special startletter piece:', sl);
                   if (this.getXPos(sl) === pam.oldPos[0]
                     && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
                     pid = pam.pieceId;
@@ -834,7 +833,7 @@ export class ChessComponent implements OnInit {
         }
 
         if (pid >= 0) {
-          console.log(`${PieceType[pt]} moves to [${pos[0]}, ${pos[1]}](${n[j]})`);
+          //console.log(`${PieceType[pt]} moves to [${pos[0]}, ${pos[1]}](${n[j]})`);
           let pToDie: ChessPiece;
           if (this.state === StateType.kill) {
             pToDie = this.chess.getPieceAtPos(pos);

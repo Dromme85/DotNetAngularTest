@@ -456,7 +456,6 @@ export class PieceKing extends ChessPiece {
     }
     if (!this.hasMoved) {
       this.hasMoved = true;
-      console.log('King has moved!');
     }
   }
 }
