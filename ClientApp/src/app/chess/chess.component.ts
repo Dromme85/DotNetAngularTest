@@ -26,6 +26,7 @@ export class ChessComponent implements OnInit {
   public notationString: string = '';
   public notationIndex: number = 1;
   public notation: ChessNotation = new ChessNotation;
+  public notationOffset: number = 0;
   public chessIndex?: number = 0;
 
   constructor(
@@ -56,6 +57,26 @@ export class ChessComponent implements OnInit {
       .subscribe(data => this.moves = data);
   }
 
+  notationTop() {
+    if (this.notationOffset > 0) this.notationOffset = 0;
+    this.loadBoard(this.chessIndex, true);
+  }
+
+  notationUp() {
+    if (this.notationOffset > 0) this.notationOffset--;
+    this.loadBoard(this.chessIndex, true);
+  }
+
+  notationDown() {
+    if (this.notationOffset < this.newMoves.length - 1) this.notationOffset++;
+    this.loadBoard(this.chessIndex, true);
+  }
+
+  notationBottom() {
+    if (this.notationOffset < this.newMoves.length - 1) this.notationOffset = this.newMoves.length - 1;
+    this.loadBoard(this.chessIndex, true);
+  }
+
   cellClick(x: number, y: number) {
 
     let p = this.chess.getPieceAtXY(x, y);
@@ -72,8 +93,7 @@ export class ChessComponent implements OnInit {
     }
 
     if (this.chess.board[x][y] && this.oldSelected !== p) {
-
-      let pawnOldPos: number[] = this.oldSelected.piece === PieceType.pawn ? this.oldSelected.pos: [-1, -1];
+      let oldPos: number[] = this.oldSelected.pos;
 
       this.oldSelected.makeMove(x, y);
       // Castling
@@ -91,7 +111,10 @@ export class ChessComponent implements OnInit {
           this.notation.add(StateType.castle, 'O-O-O');
         }
       }
-      this.notation.add(StateType.piece, `${this.getPieceLetter(this.oldSelected.piece)}`);
+      if (this.oldSelected.piece === PieceType.rook || this.oldSelected.piece === PieceType.knight)
+        this.notation.add(StateType.piece, `${this.getPieceLetter(this.oldSelected.piece)}${this.getXLetter(oldPos[0]).toLowerCase()}`);
+      else
+        this.notation.add(StateType.piece, `${this.getPieceLetter(this.oldSelected.piece)}`);
 
       if (this.testCheckMove(this.oldSelected)) {
         this.check = true;
@@ -108,7 +131,7 @@ export class ChessComponent implements OnInit {
           this.notation.add(this.state);
 
         if (this.oldSelected.piece === PieceType.pawn)
-          this.notation.add(StateType.piece, this.getXLetter(pawnOldPos[0]).toLowerCase());
+          this.notation.add(StateType.piece, this.getXLetter(oldPos[0]).toLowerCase());
 
         p.alive = false;
         p.pos = [];
@@ -132,11 +155,21 @@ export class ChessComponent implements OnInit {
         this.notation.add(this.state, `# ${this.chess.turn ? '1-0' : '0-1'}`);
       }
 
+      if (this.notationOffset > 0) {
+        for (var i = 0; i < this.notationOffset; i++) {
+          this.moves.shift();
+          this.newMoves.pop();
+        }
+        this.notationOffset = 0;
+      }
+
       if (this.chess.turn) {
         this.moves.unshift(`${this.notationIndex++}. ${this.notation.getText()}`);
+        this.newMoves.push(this.moves[0]);
       }
       else {
         this.moves[0] += ' ' + this.notation.getText();
+        this.newMoves[this.newMoves.length - 1] = this.moves[0];
         this.saveNotation(this.moves[0]);
       }
       this.notation.reset();
@@ -638,11 +671,11 @@ export class ChessComponent implements OnInit {
   }
 
   async newGame() {
+    this.notationOffset = 0;
     this.chessIndex = await this.chessService.newNotation().toPromise();
     console.log('Creating a new game', this.chessIndex);
 
     this.loadBoard(this.chessIndex);
-    //await this.chessService.getNotation().then(data => this.newMoves = data);
   }
 
   resetBoard() {
@@ -734,20 +767,24 @@ export class ChessComponent implements OnInit {
     }
   }
 
-  loadBoard(index: number = 0): boolean {
+  loadBoard(index: number = -1, reload: boolean = false): boolean {
 
-    if (index === 0 && this.chessIndex) index = this.chessIndex;
-    //this.resetBoard();
+    if (index === -1 && this.chessIndex) index = this.chessIndex;
     this.state = StateType.none;
 
     (async () => {
 
-      await this.loadNotation();
-    
+      if (!reload)
+        await this.loadNotation();
+      else
+        this.resetBoard();
+
+      //console.log('Current Moves:', this.newMoves);
       //console.log('LoadBoard() started!');
-      for (var i = 0; i < this.newMoves.length; i++) {
+      for (var i = 0; i < this.newMoves.length - this.notationOffset; i++) {
 
         this.moves.unshift(this.newMoves[i]);
+        //console.log('Iterating Moves:', this.moves);
 
         let n = this.newMoves[i].split(' ');
         for (var j = 0; j < n.length; j++) {
@@ -767,13 +804,19 @@ export class ChessComponent implements OnInit {
                 //console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
               }
               else if (n[j][1].match(/[a-h]/)) {
-                this.state = StateType.move;
-                if (n[j][2].match(/[a-h]/)) {
+                if (n[j][2] === 'x') {
+                  this.state = StateType.kill;
+                  pos = [this.getXPos(n[j][3]), this.getYPos(n[j][4])];
+                  //console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
+                }
+                else if (n[j][2].match(/[a-h]/)) {
+                  this.state = StateType.move;
                   pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
                   sl = n[j][1];
                   //console.log(`Pos found: ${sl}(${this.getXPos(sl)})${n[j][2]}${n[j][3]}`);
                 }
                 else {
+                  this.state = StateType.move;
                   pos = [this.getXPos(n[j][1]), this.getYPos(n[j][2])];
                   //console.log(`Pos found: ${n[j][1]}${n[j][2]}`);
                 }
@@ -788,8 +831,8 @@ export class ChessComponent implements OnInit {
               }
               else if (n[j][1].match(/[1-8]/)) {
                 this.state = StateType.move;
-                //console.log(`Pawn Pos found: ${c}${n[j][1]}`);
                 pos = [this.getXPos(c), this.getYPos(n[j][1])];
+                //console.log(`Pawn Pos found: ${c}${n[j][1]}`);
               }
             }
             else if (n[j] === 'O-O' || n[j] === 'O-O-O') {
@@ -799,7 +842,6 @@ export class ChessComponent implements OnInit {
             else {
 
             }
-            //if (this.state === StateType.kill) console.log('State:', StateType[this.state]);
           }
 
           let pid = -1;
@@ -807,7 +849,6 @@ export class ChessComponent implements OnInit {
 
           if (pos[0] !== undefined) {
 
-            // TODO: Add move logic here, need to find the specific piece that can move to 'pos'
             let pieces = this.chess.pieces.filter(a => a.piece === pt && a.color === this.chess.turn);
 
             for (var l = 0; l < pieces.length; l++) {

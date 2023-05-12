@@ -9,10 +9,17 @@
       <div *ngIf="state == 7">Remi</div>
       <div *ngIf="debug">Game State: {{getStateText()}}</div>
     </div>
+    <div class="notation-arrows">
+      <i class="fa-solid fa-forward-step mb-2" style="transform: rotateZ(-90deg) translateY(1px); font-size: .8rem" (click)="notationTop()" [ngClass]="{ disabled: notationOffset === 0}"></i>
+      <i class="fa-solid fa-caret-up mb-2" (click)="notationUp()" [ngClass]="{ disabled: notationOffset === 0}"></i>
+      <div *ngIf="debug" class="mb-2">{{notationOffset}}</div>
+      <i class="fa-solid fa-caret-down mb-2" (click)="notationDown()" [ngClass]="{ disabled: notationOffset === newMoves.length - 1 }"></i>
+      <i class="fa-solid fa-forward-step" style="transform: rotateZ(90deg) translateY(1px); font-size: .8rem" (click)="notationBottom()" [ngClass]="{ disabled: notationOffset === newMoves.length - 1}"></i>
+    </div>
     <div class="chess-info">
       <ul>
         <li><b>Game Notation:</b></li>
-        <li *ngFor="let move of moves">{{move}}</li>
+        <li *ngFor="let move of newMoves.reverse(); index as i" [ngClass]="{ active: i === notationOffset }">{{move}}</li>
       </ul>
     </div>
   </div>
@@ -74,7 +81,7 @@
   <div class="btn-area">
     <div class="text-end mb-1"><button type="button" class="btn btn-sm btn-primary" (click)="loadBoard()">Load Board</button></div>
     <div class="text-end mb-1" *ngIf="state != 6 && state != 9"><button type="button" class="btn btn-sm btn-danger" (click)="forfeit()">Give Up</button></div>
-    <div class="text-end" *ngIf="debug && (state != 6 && state != 9)"><button type="reset" class="btn btn-sm btn-warning" (click)="resetBoard()">Reset Game</button></div>
+    <div class="text-end" *ngIf="debug && (state != 6 && state != 9)"><button type="reset" class="btn btn-sm btn-warning" (click)="newGame()">Reset Game</button></div>
     <div class="text-end" *ngIf="state == 6 || state == 9"><button type="reset" class="btn btn-sm btn-success" (click)="newGame()">New Game</button></div>
     <div class="d-flex mt-3">
       <label for="debug">Debug Mode</label>

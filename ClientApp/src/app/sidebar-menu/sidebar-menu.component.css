@@ -101,6 +101,10 @@
   }
 
   .sidebar.closed .text {
+    display: none;
+  }
+
+  .sidebar.closed .header-text {
     opacity: 0;
   }
 

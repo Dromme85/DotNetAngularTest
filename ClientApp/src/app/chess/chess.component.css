@@ -51,6 +51,31 @@
         min-width: 12rem;
       }
 
+      .chess-body .chess-left .chess-info ul li.active {
+        font-weight: 500;
+      }
+
+    .chess-body .chess-left .notation-arrows {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      left: -1rem;
+      top: 4rem;
+      height: 0;
+      width: 0;
+    }
+
+      .chess-body .chess-left .notation-arrows i {
+        cursor: pointer;
+      }
+
+      .chess-body .chess-left .notation-arrows i.disabled {
+        cursor: default;
+        color: lightgray;
+      }
+
   .chess-body .chess-dead {
     position: fixed;
     display: flex;
