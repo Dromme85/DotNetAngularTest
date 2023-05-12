@@ -22,13 +22,12 @@ This chess game is made with Angular.
   - A pawn can kill an enemy pawn that has moved two square by attacking the passed square
 - [x] **(Figurine) Algebraic Notation** (*Optional*) - [*link*](https://en.wikipedia.org/wiki/Algebraic_notation_(chess))
   - The standard method for recording and describing the moves in a game of chess
-- [ ] **Reset/Give Up** - Button to reset the board should be added
-- [ ] **Save State** - Game shouldn't be reset on page refresh
+- [x] **Reset/Give Up** - Button to reset the board should be added
+  - More or less done, "Reset Game" doesn't work, but "New Game" (same thing?) do work.
+- [x] **Save State** - Game shouldn't be reset on page refresh
   - Save to database?
-  - Save locally (session)?
-  - Save in cookies?
+  - -> Save locally (session)
   - Save to/Load from file, [Portable Game Notation (PGN)](https://en.wikipedia.org/wiki/Portable_Game_Notation)
-  - Other alternatives? Look how the treegrid is done.
 
 ## Known Bugs
 

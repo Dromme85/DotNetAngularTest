@@ -9,7 +9,7 @@ const PROXY_CONFIG = [
       "/weatherforecast",
       "/heroapi",
       "/treegridapi",
-      //"/heroapi/*",
+      "/chessapi",
       "/favicon.ico",
    ],
     target: target,

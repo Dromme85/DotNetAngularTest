@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { timer } from 'rxjs';
-
 import {
   ChessBoard, ChessPiece, ChessMove, PieceType, StateType, ChessNotation,
   PiecePawn, PieceRook, PieceBishop, PieceKnight, PieceQueen, PieceKing,
 } from './chess.objects';
+import { ChessService } from './chess.service';
 
 @Component({
   selector: 'app-chess',
@@ -19,6 +18,7 @@ export class ChessComponent implements OnInit {
   public chess: ChessBoard = new ChessBoard;
   public oldSelected: ChessPiece = new ChessPiece;
   public moves: string[] = [];
+  public newMoves: string[] = [];
   public deadLightPieces: ChessPiece[] = [];
   public deadDarkPieces: ChessPiece[] = [];
   public state: StateType = StateType.none;
@@ -26,10 +26,11 @@ export class ChessComponent implements OnInit {
   public notationString: string = '';
   public notationIndex: number = 1;
   public notation: ChessNotation = new ChessNotation;
+  public chessIndex?: number = 0;
 
-  constructor() {
-    this.resetBoard();
-
+  constructor(
+    private chessService: ChessService,
+  ) {
     this.loadBoard();
   }
 
@@ -42,6 +43,17 @@ export class ChessComponent implements OnInit {
 
   forfeit() {
     this.state = StateType.forfeit;
+  }
+
+  async loadNotation() {
+    this.resetBoard();
+    await this.chessService.getNotation().then(data => this.newMoves = data);
+  }
+
+  saveNotation(n: string) {
+    console.log('Trying to save moves.');
+    this.chessService.addNotation(n)
+      .subscribe(data => this.moves = data);
   }
 
   cellClick(x: number, y: number) {
@@ -70,13 +82,13 @@ export class ChessComponent implements OnInit {
         if (this.oldSelected.pos[0] === 6) {
           let c = this.chess.getPieceAtPos([7, this.oldSelected.pos[1]]);
           c.makeMove(5, this.oldSelected.pos[1]);
-          this.notation.add(StateType.castle, ' O-O');
+          this.notation.add(StateType.castle, 'O-O');
         }
         // Queenside
         else if (this.oldSelected.pos[0] === 2) {
           let c = this.chess.getPieceAtPos([0, this.oldSelected.pos[1]]);
           c.makeMove(3, this.oldSelected.pos[1]);
-          this.notation.add(StateType.castle, ' O-O-O');
+          this.notation.add(StateType.castle, 'O-O-O');
         }
       }
       this.notation.add(StateType.piece, `${this.getPieceLetter(this.oldSelected.piece)}`);
@@ -120,8 +132,13 @@ export class ChessComponent implements OnInit {
         this.notation.add(this.state, `# ${this.chess.turn ? '1-0' : '0-1'}`);
       }
 
-      if (this.chess.turn) this.moves.unshift(`${this.notationIndex++}. ${this.notation.getText()}`);
-      else this.moves[0] += ' ' + this.notation.getText();
+      if (this.chess.turn) {
+        this.moves.unshift(`${this.notationIndex++}. ${this.notation.getText()}`);
+      }
+      else {
+        this.moves[0] += ' ' + this.notation.getText();
+        this.saveNotation(this.moves[0]);
+      }
       this.notation.reset();
 
       this.chess.nextTurn();
@@ -620,6 +637,14 @@ export class ChessComponent implements OnInit {
     }
   }
 
+  async newGame() {
+    this.chessIndex = await this.chessService.newNotation().toPromise();
+    console.log('Creating a new game', this.chessIndex);
+
+    this.loadBoard(this.chessIndex);
+    //await this.chessService.getNotation().then(data => this.newMoves = data);
+  }
+
   resetBoard() {
     // width, height, piece size (rem)
     this.chess.size = [8, 8, 2.5];
@@ -629,6 +654,9 @@ export class ChessComponent implements OnInit {
     this.deadDarkPieces = [];
     this.state = StateType.none;
     this.check = false;
+    this.notationIndex = 1;
+
+    this.chessService.resetNotation();
 
     for (var i = 0; i < this.chess.size[0]; i++) {
       this.chess.board[i] = [];
@@ -706,196 +734,188 @@ export class ChessComponent implements OnInit {
     }
   }
 
-  saveBoard(): boolean {
+  loadBoard(index: number = 0): boolean {
 
-    return false;
-  }
-
-  loadBoard(): boolean {
-    this.resetBoard();
+    if (index === 0 && this.chessIndex) index = this.chessIndex;
+    //this.resetBoard();
     this.state = StateType.none;
-    let notes: string[] = [
-      "1. Nf3 Nf6", "2. c4 g6", "3. Nc3 Bg7", "4. d4 O-O", "5. Bf4 d5",
-      "6. Qb3 dxc4", "7. Qxc4 c6", "8. e4 Nbd7", "9. Rd1 Nb6", "10. Qc5 Bg4",
-      "11. Bg5 Na4", "12. Qa3 Nxc3", "13. bxc3 Nxe4", "14. Bxe7 Qb6", "15. Bc4 Nxc3",
-      "16. Bc5 Rfe8+", "17. Kf1 Be6", "18. Bxb6 Bxc4+", "19. Kg1 Ne2+", "20. Kf1 Nxd4+",
-      "21. Kg1 Ne2+", "22. Kf1 Nc3+", "23. Kg1 axb6", "24. Qb4 Ra4", "25. Qxb6 Nxd1",
-      "26. h3 Rxa2", "27. Kh2 Nxf2", "28. Re1 Rxe1", "29. Qd8+ Bf8", "30. Nxe1 Bd5",
-      "31. Nf3 Ne4", "32. Qb8 b5", "33. h4 h5", "34. Ne5 Kg7", "35. Kg1 Bc5+",
-      "36. Kf1 Ng3+", "37. Ke1 Bb4+", "38. Kd1 Bb3+", "39. Kc1 Ne2+", "40. Kb1 Nc3+",
-      "41. Kc1 Rc2# 0-1",
-    ];
-    //console.log('LoadBoard() started!');
-    for (var i = 0; i < notes.length; i++) {
 
-      this.moves.unshift(notes[i]);
+    (async () => {
 
-      let n = notes[i].split(' ');
-      for (var j = 0; j < n.length; j++) {
-        let pt: PieceType = PieceType.pawn;
-        let pos: number[] = [];
-        let sl: string = '';
-        if (this.state === StateType.none) {
-          //console.warn('Working on', n[j]);
-          this.notationIndex = +n[0].trimEnd() + 1;
-          let c = n[j][0];
-          if (c.match(/[RNBQK]/)) {
-            //console.log(`Piece found: ${PieceType[this.getPieceType(c)]}`);
-            pt = this.getPieceType(c);
-            if (n[j][1] === 'x') {
-              this.state = StateType.kill;
-              pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
-              //console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
-            }
-            else if (n[j][1].match(/[a-h]/)) {
-              this.state = StateType.move;
-              if (n[j][2].match(/[a-h]/)) {
+      await this.loadNotation();
+    
+      //console.log('LoadBoard() started!');
+      for (var i = 0; i < this.newMoves.length; i++) {
+
+        this.moves.unshift(this.newMoves[i]);
+
+        let n = this.newMoves[i].split(' ');
+        for (var j = 0; j < n.length; j++) {
+          let pt: PieceType = PieceType.pawn;
+          let pos: number[] = [];
+          let sl: string = '';
+          if (this.state === StateType.none) {
+            //console.warn('Working on', n[j]);
+            this.notationIndex = +n[0].trimEnd() + 1;
+            let c = n[j][0];
+            if (c.match(/[RNBQK]/)) {
+              //console.log(`Piece found: ${PieceType[this.getPieceType(c)]}`);
+              pt = this.getPieceType(c);
+              if (n[j][1] === 'x') {
+                this.state = StateType.kill;
                 pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
-                sl = n[j][1];
-                //console.log(`Pos found: ${sl}(${this.getXPos(sl)})${n[j][2]}${n[j][3]}`);
+                //console.log(`${PieceType[this.getPieceType(c)]} kill`, pos);
               }
-              else {
-                pos = [this.getXPos(n[j][1]), this.getYPos(n[j][2])];
-                //console.log(`Pos found: ${n[j][1]}${n[j][2]}`);
-              }
-
-            }
-          }
-          else if (c.match(/[a-h]/)) {
-            if (n[j][1] === 'x') {
-              this.state = StateType.kill;
-              pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
-              //console.log('Pawn kill', pos);
-            }
-            else if (n[j][1].match(/[1-8]/)) {
-              this.state = StateType.move;
-              //console.log(`Pawn Pos found: ${c}${n[j][1]}`);
-              pos = [this.getXPos(c), this.getYPos(n[j][1])];
-            }
-          }
-          else if (n[j] === 'O-O' || n[j] === 'O-O-O') {
-            this.state = StateType.castle;
-            //console.log('Castling found', n[j]);
-          }
-          else {
-
-          }
-          //if (this.state === StateType.kill) console.log('State:', StateType[this.state]);
-        }
-
-        let pid = -1;
-        //console.log('Current State:', StateType[this.state]);
-
-        if (pos[0] !== undefined) {
-
-          // TODO: Add move logic here, need to find the specific piece that can move to 'pos'
-          let pieces = this.chess.pieces.filter(a => a.piece === pt && a.color === this.chess.turn);
-
-          for (var l = 0; l < pieces.length; l++) {
-            let pams = pieces[l].availableMoves();
-            for (var m = 0; m < pams.length; m++) {
-              let pam = pams[m];
-              if (pt === PieceType.pawn) {
-                if (this.state === StateType.kill
-                  && (pos[0] === pam.oldPos[0] + 1 || pos[0] === pam.oldPos[0] - 1)
-                  && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
-                  pid = pam.pieceId;
-                  m = pams.length;
-                  l = pieces.length;
-                  //console.log('Pawn kill id:', pid);
+              else if (n[j][1].match(/[a-h]/)) {
+                this.state = StateType.move;
+                if (n[j][2].match(/[a-h]/)) {
+                  pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
+                  sl = n[j][1];
+                  //console.log(`Pos found: ${sl}(${this.getXPos(sl)})${n[j][2]}${n[j][3]}`);
                 }
-                else if (this.state === StateType.move && pam.oldPos[0] === pam.newPos[0]
-                  && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
-                  pid = pam.pieceId;
-                  m = pams.length;
-                  l = pieces.length;
+                else {
+                  pos = [this.getXPos(n[j][1]), this.getYPos(n[j][2])];
+                  //console.log(`Pos found: ${n[j][1]}${n[j][2]}`);
                 }
+
               }
-              else {
-                if (this.state === StateType.move && sl !== '') {
-                  if (this.getXPos(sl) === pam.oldPos[0]
+            }
+            else if (c.match(/[a-h]/)) {
+              if (n[j][1] === 'x') {
+                this.state = StateType.kill;
+                pos = [this.getXPos(n[j][2]), this.getYPos(n[j][3])];
+                //console.log('Pawn kill', pos);
+              }
+              else if (n[j][1].match(/[1-8]/)) {
+                this.state = StateType.move;
+                //console.log(`Pawn Pos found: ${c}${n[j][1]}`);
+                pos = [this.getXPos(c), this.getYPos(n[j][1])];
+              }
+            }
+            else if (n[j] === 'O-O' || n[j] === 'O-O-O') {
+              this.state = StateType.castle;
+              //console.log('Castling found', n[j]);
+            }
+            else {
+
+            }
+            //if (this.state === StateType.kill) console.log('State:', StateType[this.state]);
+          }
+
+          let pid = -1;
+          //console.log('Current State:', StateType[this.state]);
+
+          if (pos[0] !== undefined) {
+
+            // TODO: Add move logic here, need to find the specific piece that can move to 'pos'
+            let pieces = this.chess.pieces.filter(a => a.piece === pt && a.color === this.chess.turn);
+
+            for (var l = 0; l < pieces.length; l++) {
+              let pams = pieces[l].availableMoves();
+              for (var m = 0; m < pams.length; m++) {
+                let pam = pams[m];
+                if (pt === PieceType.pawn) {
+                  if (this.state === StateType.kill
+                    && (pos[0] === pam.oldPos[0] + 1 || pos[0] === pam.oldPos[0] - 1)
+                    && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
+                    pid = pam.pieceId;
+                    m = pams.length;
+                    l = pieces.length;
+                    //console.log('Pawn kill id:', pid);
+                  }
+                  else if (this.state === StateType.move && pam.oldPos[0] === pam.newPos[0]
                     && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
                     pid = pam.pieceId;
                     m = pams.length;
                     l = pieces.length;
                   }
                 }
-                else if (pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
-                  pid = pam.pieceId;
-                  m = pams.length;
-                  l = pieces.length;
+                else {
+                  if (this.state === StateType.move && sl !== '') {
+                    if (this.getXPos(sl) === pam.oldPos[0]
+                      && pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
+                      pid = pam.pieceId;
+                      m = pams.length;
+                      l = pieces.length;
+                    }
+                  }
+                  else if (pam.newPos[0] === pos[0] && pam.newPos[1] === pos[1]) {
+                    pid = pam.pieceId;
+                    m = pams.length;
+                    l = pieces.length;
+                  }
                 }
+
               }
-
             }
+
+          }
+
+          if (pid >= 0) {
+            //console.log(`${PieceType[pt]} moves to [${pos[0]}, ${pos[1]}](${n[j]})`);
+            let pToDie: ChessPiece;
+            if (this.state === StateType.kill) {
+              pToDie = this.chess.getPieceAtPos(pos);
+              pToDie.alive = false;
+              pToDie.pos = [];
+              this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color && p.id !== 0);
+              this.deadDarkPieces = this.chess.pieces.filter(p => !p.alive && !p.color && p.id !== 0);
+            }
+            pid = this.chess.pieces.findIndex(id => id.id === pid);
+            this.chess.pieces[pid].makeMove(pos[0], pos[1]);
+            this.chess.nextTurn();
+            this.state = StateType.none;
+          }
+          else if (this.state === StateType.castle) {
+            if (n[j].length === 3) { // Kingside castling moves (O-O)
+              if (this.chess.turn) {
+                let k = this.chess.getPieceAtPos([4, 7]);
+                let r = this.chess.getPieceAtPos([7, 7]);
+                let kid = this.chess.pieces.findIndex(id => id.id === k.id);
+                let rid = this.chess.pieces.findIndex(id => id.id === r.id);
+
+                this.chess.pieces[kid].makeMove(6, 7);
+                this.chess.pieces[rid].makeMove(5, 7);
+              }
+              else {
+                let k = this.chess.getPieceAtPos([4, 0]);
+                let r = this.chess.getPieceAtPos([7, 0]);
+                let kid = this.chess.pieces.findIndex(id => id.id === k.id);
+                let rid = this.chess.pieces.findIndex(id => id.id === r.id);
+
+                this.chess.pieces[kid].makeMove(6, 0);
+                this.chess.pieces[rid].makeMove(5, 0);
+              }
+            }
+            else if (n[j].length === 5) { // Queenside castling moves (O-O-O)
+              if (this.chess.turn) {
+                let k = this.chess.getPieceAtPos([4, 7]);
+                let r = this.chess.getPieceAtPos([0, 7]);
+                let kid = this.chess.pieces.findIndex(id => id.id === k.id);
+                let rid = this.chess.pieces.findIndex(id => id.id === r.id);
+
+                this.chess.pieces[kid].makeMove(2, 7);
+                this.chess.pieces[rid].makeMove(3, 7);
+              }
+              else {
+                let k = this.chess.getPieceAtPos([4, 0]);
+                let r = this.chess.getPieceAtPos([0, 0]);
+                let kid = this.chess.pieces.findIndex(id => id.id === k.id);
+                let rid = this.chess.pieces.findIndex(id => id.id === r.id);
+
+                this.chess.pieces[kid].makeMove(2, 0);
+                this.chess.pieces[rid].makeMove(3, 0);
+              }
+            }
+
+            this.chess.nextTurn();
+            this.state = StateType.none;
           }
 
         }
-
-        if (pid >= 0) {
-          //console.log(`${PieceType[pt]} moves to [${pos[0]}, ${pos[1]}](${n[j]})`);
-          let pToDie: ChessPiece;
-          if (this.state === StateType.kill) {
-            pToDie = this.chess.getPieceAtPos(pos);
-            pToDie.alive = false;
-            pToDie.pos = [];
-            this.deadLightPieces = this.chess.pieces.filter(p => !p.alive && p.color && p.id !== 0);
-            this.deadDarkPieces = this.chess.pieces.filter(p => !p.alive && !p.color && p.id !== 0);
-          }
-          pid = this.chess.pieces.findIndex(id => id.id === pid);
-          this.chess.pieces[pid].makeMove(pos[0], pos[1]);
-          this.chess.nextTurn();
-          this.state = StateType.none;
-        }
-        else if (this.state === StateType.castle) {
-          if (n[j].length === 3) { // Kingside castling moves (O-O)
-            if (this.chess.turn) {
-              let k = this.chess.getPieceAtPos([4, 7]);
-              let r = this.chess.getPieceAtPos([7, 7]);
-              let kid = this.chess.pieces.findIndex(id => id.id === k.id);
-              let rid = this.chess.pieces.findIndex(id => id.id === r.id);
-
-              this.chess.pieces[kid].makeMove(6, 7);
-              this.chess.pieces[rid].makeMove(5, 7);
-            }
-            else {
-              let k = this.chess.getPieceAtPos([4, 0]);
-              let r = this.chess.getPieceAtPos([7, 0]);
-              let kid = this.chess.pieces.findIndex(id => id.id === k.id);
-              let rid = this.chess.pieces.findIndex(id => id.id === r.id);
-
-              this.chess.pieces[kid].makeMove(6, 0);
-              this.chess.pieces[rid].makeMove(5, 0);
-            }
-          }
-          else if (n[j].length === 5) { // Queenside castling moves (O-O-O)
-            if (this.chess.turn) {
-              let k = this.chess.getPieceAtPos([4, 7]);
-              let r = this.chess.getPieceAtPos([0, 7]);
-              let kid = this.chess.pieces.findIndex(id => id.id === k.id);
-              let rid = this.chess.pieces.findIndex(id => id.id === r.id);
-
-              this.chess.pieces[kid].makeMove(2, 7);
-              this.chess.pieces[rid].makeMove(3, 7);
-            }
-            else {
-              let k = this.chess.getPieceAtPos([4, 0]);
-              let r = this.chess.getPieceAtPos([0, 0]);
-              let kid = this.chess.pieces.findIndex(id => id.id === k.id);
-              let rid = this.chess.pieces.findIndex(id => id.id === r.id);
-
-              this.chess.pieces[kid].makeMove(2, 0);
-              this.chess.pieces[rid].makeMove(3, 0);
-            }
-          }
-
-          this.chess.nextTurn();
-          this.state = StateType.none;
-        }
-
       }
-    }
 
+    })();
 
     return false;
   }

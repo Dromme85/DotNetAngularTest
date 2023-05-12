@@ -531,8 +531,7 @@ export class ChessNotation {
           result += this.notations[i][1];
           break;
         case StateType.castle: // O-O or O-O-O
-          result += this.notations[i][1];
-          break;
+          return this.notations[i][1];
         case StateType.kill: // x
           result += 'x';
           break;
