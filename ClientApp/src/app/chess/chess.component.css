@@ -102,6 +102,8 @@
     width: auto;
     height: auto;
     outline: 1em outset #9c5613;
+    background: url("bg.png");
+    background-size: cover;
   }
 
 th, td {
@@ -151,10 +153,30 @@ i.light {
   color: var(--piece-light-color);
   text-shadow: 0 0 .07em #fffdf0;
 }
+
 i.dark {
   color: var(--piece-dark-color);
   text-shadow: 0 0 .07em #808080;
 }
+
+@supports (background-clip: text) {
+  i.light {
+    background-image: linear-gradient(90deg, silver, #ddd);
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 .03em #808080);
+    text-shadow: none;
+  }
+
+  i.dark {
+    background-image: linear-gradient(90deg, gold, #857000);
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 .03em #ccc);
+    text-shadow: none;
+  }
+}
+
 
 .info {
   position: fixed;

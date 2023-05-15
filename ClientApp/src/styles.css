@@ -15,8 +15,8 @@
   --hidden-tree-color: #00640010;
 
   /* Chess Colors */
-  --board-light-color: #e4e9f7;
-  --board-dark-color: #707070;
+  --board-light-color: #e4e9f790;
+  --board-dark-color: #40404090;
   --piece-light-color: silver;
   --piece-dark-color: gold;
 
