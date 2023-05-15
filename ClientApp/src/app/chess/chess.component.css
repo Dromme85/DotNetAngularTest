@@ -71,10 +71,10 @@
         cursor: pointer;
       }
 
-      .chess-body .chess-left .notation-arrows i.disabled {
-        cursor: default;
-        color: lightgray;
-      }
+        .chess-body .chess-left .notation-arrows i.disabled {
+          cursor: default;
+          color: #8888;
+        }
 
   .chess-body .chess-dead {
     position: fixed;
@@ -161,7 +161,7 @@ i.dark {
 
 @supports (background-clip: text) {
   i.light {
-    background-image: linear-gradient(90deg, silver, #ddd);
+    background-image: linear-gradient(110deg, var(--piece-light-color), var(--piece-light-color), #ddd);
     background-clip: text;
     color: transparent;
     filter: drop-shadow(0 0 .03em #808080);
@@ -169,7 +169,7 @@ i.dark {
   }
 
   i.dark {
-    background-image: linear-gradient(90deg, gold, #857000);
+    background-image: linear-gradient(110deg, var(--piece-dark-color), var(--piece-dark-color), #857000);
     background-clip: text;
     color: transparent;
     filter: drop-shadow(0 0 .03em #ccc);
