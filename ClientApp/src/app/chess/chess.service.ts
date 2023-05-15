@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of, lastValueFrom } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
@@ -29,7 +29,8 @@ export class ChessService {
   private async getAsyncNotation() {
     const url = `${this.chessUrl}/getnotation`;
 
-    this.notation = await this.http.get<string[]>(url).toPromise();
+    const nn$ = this.http.get<string[]>(url);
+    this.notation = await lastValueFrom(nn$);
   }
 
   addNotation(n: string): Observable<string[]> {

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { lastValueFrom } from 'rxjs'
 import {
   ChessBoard, ChessPiece, ChessMove, PieceType, StateType, ChessNotation,
   PiecePawn, PieceRook, PieceBishop, PieceKnight, PieceQueen, PieceKing,
@@ -672,7 +673,8 @@ export class ChessComponent implements OnInit {
 
   async newGame() {
     this.notationOffset = 0;
-    this.chessIndex = await this.chessService.newNotation().toPromise();
+    const nn$ = this.chessService.newNotation();
+    this.chessIndex = await lastValueFrom(nn$);
     console.log('Creating a new game', this.chessIndex);
 
     this.loadBoard(this.chessIndex);
