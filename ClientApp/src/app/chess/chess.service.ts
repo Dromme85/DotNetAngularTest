@@ -20,23 +20,26 @@ export class ChessService {
   ) { }
 
   async getNotation(): Promise<string[]> {
-    await this.getAsyncNotation();
-    if (this.notation !== undefined)
-      return this.notation;
-    return [];
-  }
-
-  private async getAsyncNotation() {
     const url = `${this.chessUrl}/getnotation`;
 
     const nn$ = this.http.get<string[]>(url);
     this.notation = await lastValueFrom(nn$);
+
+    if (this.notation !== undefined)
+      return this.notation;
+
+    return [];
   }
 
   addNotation(n: string): Observable<string[]> {
     const url = `${this.chessUrl}/addnotation`;
     console.log('Still trying to save move', n);
     return this.http.post<string[]>(url, `{ \"value\": \"${n}\" }`, this.httpOptions).pipe();
+  }
+
+  async removeNotation(n: number = 1) {
+    const url = `${this.chessUrl}/removenotation/${n}`;
+    await lastValueFrom(this.http.delete(url, this.httpOptions));
   }
 
   newNotation(): Observable<number> {

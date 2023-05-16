@@ -61,6 +61,19 @@ public class ChessAPIController : ControllerBase
 		return res.Moves.Reverse().ToArray();
 	}
 
+	[HttpDelete]
+	[Route("removenotation/{value}")]
+	public void Delete(int value)
+	{
+		var res = Notations[CurrentIndex];
+
+		var tl = res.Moves.ToList();
+		tl.RemoveRange(tl.Count - value, value);
+		res.Moves = tl.ToArray();
+
+		//return res.Moves.Reverse().ToArray();
+	}
+
 	[HttpGet]
 	[Route("newnotation")]
 	public int New()

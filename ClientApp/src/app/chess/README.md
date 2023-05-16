@@ -39,4 +39,4 @@ This chess game is made with Angular.
 ## Known Bugs and Problems
 
 - The King can check himself when attacking another piece. Probably just an order of execution.
-- Rolling back and playing from that state does not update the API version correct. Need to remove moves from API as well.
+- *Solved* ~Rolling back and playing from that state does not update the API version correct. Need to remove moves from API as well.~

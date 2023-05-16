@@ -158,9 +158,11 @@ export class ChessComponent implements OnInit {
 
       if (this.notationOffset > 0) {
         for (var i = 0; i < this.notationOffset; i++) {
-          this.moves.shift();
+          //this.moves.shift();
           this.newMoves.pop();
         }
+        console.log(`removenotation/${this.notationOffset}`);
+        this.chessService.removeNotation(this.notationOffset);
         this.notationOffset = 0;
       }
 
@@ -233,6 +235,9 @@ export class ChessComponent implements OnInit {
             break;
           case PieceType.bishop:
             this.chess.board[pos[0]][pos[1]] = this.testBishopMove(p, pos, enemyFound);
+            if (this.chess.board[pos[0]][pos[1]]) {
+              this.chess.board[pos[0]][pos[1]] = !this.willKingBeCheck(pam[i].oldPos);
+            }
             break;
           case PieceType.knight:
             this.chess.board[pos[0]][pos[1]] = this.testKnightMove(p, pamp, pos);
@@ -294,23 +299,20 @@ export class ChessComponent implements OnInit {
     if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        if (ip[1] === j && wip) {
+        if (ip[1] === j && wip)
           isFreeToMove = true;
-        }
         else if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
           enemyFound[0] = true;
         else if (checkp.alive)
           isFreeToMove = false;
       }
-
     }
     // East
     else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        if (ip[0] === j && wip) {
+        if (ip[0] === j && wip)
           isFreeToMove = true;
-        }
         else if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
           enemyFound[1] = true;
         else if (checkp.alive)
@@ -321,9 +323,8 @@ export class ChessComponent implements OnInit {
     else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        if (ip[1] === j && wip) {
+        if (ip[1] === j && wip)
           isFreeToMove = true;
-        }
         else if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
           enemyFound[2] = true;
         else if (checkp.alive)
@@ -334,9 +335,8 @@ export class ChessComponent implements OnInit {
     else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        if (ip[1] === p.pos[1] && ip[0] === j && wip) {
-          isFreeToMove = false;
-        }
+        if (ip[0] === j && wip)
+          isFreeToMove = true;
         else if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
           enemyFound[3] = true;
         else if (checkp.alive)
@@ -347,9 +347,11 @@ export class ChessComponent implements OnInit {
     return isFreeToMove;
   }
 
-  testBishopMove(p: ChessPiece, pos: number[], enemyFound: boolean[]): boolean {
+  testBishopMove(p: ChessPiece, pos: number[], enemyFound: boolean[], ip: number[] = [10, 0]): boolean {
 
     let isFreeToMove = true;
+    let wip = ip[0] === 10 ? false : true;
+
     // North west
     if (p.pos[1] > pos[1] && p.pos[0] > pos[0]) {
       var offset = p.pos[1] - p.pos[0];
@@ -357,8 +359,15 @@ export class ChessComponent implements OnInit {
         var checkp = this.chess.getPieceAtXY(j - offset, j);
         if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
           enemyFound[0] = true;
-        else if (checkp.alive)
+        else if (checkp.alive) {
           isFreeToMove = false;
+        console.log('nw checkp', checkp);
+        }
+        if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
+          isFreeToMove = true;
+
+        if (this.posIsEqual(checkp.pos, [2, 4]))
+          console.log('why is me false?')
       }
     }
     // North east
@@ -370,8 +379,12 @@ export class ChessComponent implements OnInit {
         var checkp = this.chess.getPieceAtXY(k, j);
         if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
           enemyFound[1] = true;
-        else if (checkp.alive)
+        else if (checkp.alive) {
           isFreeToMove = false;
+        console.log('ne checkp', checkp);
+        }
+        if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
+            isFreeToMove = true;
       }
     }
     // South east
@@ -381,8 +394,12 @@ export class ChessComponent implements OnInit {
         var checkp = this.chess.getPieceAtXY(j - offset, j);
         if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
           enemyFound[2] = true;
-        else if (checkp.alive)
+        else if (checkp.alive) {
           isFreeToMove = false;
+        console.log('se checkp', checkp);
+        }
+        if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
+          isFreeToMove = true;
       }
     }
     // South west
@@ -394,8 +411,12 @@ export class ChessComponent implements OnInit {
         var checkp = this.chess.getPieceAtXY(k, j);
         if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
           enemyFound[3] = true;
-        else if (checkp.alive)
+        else if (checkp.alive) {
           isFreeToMove = false;
+        console.log('sw checkp', checkp);
+        }
+        if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
+            isFreeToMove = true;
       }
     }
 
@@ -660,19 +681,22 @@ export class ChessComponent implements OnInit {
 
     // TODO: check if 'p' can kill the king
     let pam = p.availableMoves();
-    let wip = ignorePos[0] === 10 ? false : true;
 
     for (var i = 0; i < pam.length; i++) {
       let pamp = this.chess.getPieceAtPos(pam[i].newPos);
-      let sp = (ignorePos[0] === pamp.pos[0] && ignorePos[1] === pamp.pos[1]) && wip;
       //console.log(`sp = ${ignorePos} vs ${pamp.pos}`);
       if (pamp.piece === PieceType.king && pamp.color !== p.color) {
         // test the position
         switch (p.piece) {
           case PieceType.pawn: return this.testPawnMove(p, pamp, pamp.pos);
           case PieceType.rook:
-            return this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
-          case PieceType.bishop: return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
+            if (ignorePos[0] !== 10)
+              this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
+            return this.testRookMove(p, pamp.pos, [false, false, false, false]);
+          case PieceType.bishop:
+            if (ignorePos[0] !== 10)
+              this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
+            return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
           case PieceType.knight: return this.testKnightMove(p, pamp, pamp.pos);
           case PieceType.queen: return this.testQueenMove(p, pamp.pos, [false, false, false, false, false, false, false, false]);
           case PieceType.king: return this.testKingMove(p as PieceKing, pamp, pamp.pos);
@@ -995,6 +1019,10 @@ export class ChessComponent implements OnInit {
     return false;
   }
 
+  posIsEqual(p1: number[], p2: number[]): boolean {
+    let res = p1[0] === p2[0] && p1[1] === p2[1] ? true : false;
+    return res;
+  }
 
   getXLetter(y: number, reverse: boolean = false): string {
     switch (y) {
