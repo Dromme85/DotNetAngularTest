@@ -51,6 +51,7 @@ export class ChessMove {
   newPos: number[] = [];
   color: boolean = false;
   pieceId: number = -1;
+  legal: boolean = true;
   //type: MoveType = -1;
   //pastMoves: ChessMove[] = [];
 

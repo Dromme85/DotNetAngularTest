@@ -223,15 +223,9 @@ export class ChessComponent implements OnInit {
             break;
           case PieceType.rook:
             this.chess.board[pos[0]][pos[1]] = this.testRookMove(p, pos, enemyFound);
-            if (this.chess.board[pos[0]][pos[1]]) {
-              this.chess.board[pos[0]][pos[1]] = !this.willKingBeCheck(pam[i].newPos);
-            }
             break;
           case PieceType.bishop:
             this.chess.board[pos[0]][pos[1]] = this.testBishopMove(p, pos, enemyFound);
-            if (this.chess.board[pos[0]][pos[1]]) {
-              this.chess.board[pos[0]][pos[1]] = !this.willKingBeCheck(pam[i].oldPos);
-            }
             break;
           case PieceType.knight:
             this.chess.board[pos[0]][pos[1]] = this.testKnightMove(p, pamp, pos);
@@ -284,18 +278,18 @@ export class ChessComponent implements OnInit {
     return isFreeToMove;
   }
 
-  testRookMove(p: ChessPiece, pos: number[], enemyFound: boolean[], ip: number[] = [10, 0]): boolean {
+  testRookMove(p: ChessPiece, pos: number[], enemyFound: boolean[]/*, ip: number[] = [10, 0]*/, first: boolean = true): boolean {
 
     let isFreeToMove = true;
-    let wip = ip[0] === 10 ? false : true;
+    //let wip = ip[0] === 10 ? false : true;
 
     // North
     if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        if (ip[1] === j && wip)
+        /*if (ip[1] === j && wip)
           isFreeToMove = true;
-        else if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
+        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
           enemyFound[0] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -305,9 +299,9 @@ export class ChessComponent implements OnInit {
     else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        if (ip[0] === j && wip)
+        /*if (ip[0] === j && wip)
           isFreeToMove = true;
-        else if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
+        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
           enemyFound[1] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -317,9 +311,9 @@ export class ChessComponent implements OnInit {
     else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        if (ip[1] === j && wip)
+        /*if (ip[1] === j && wip)
           isFreeToMove = true;
-        else if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
+        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
           enemyFound[2] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -329,13 +323,67 @@ export class ChessComponent implements OnInit {
     else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        if (ip[0] === j && wip)
+        /*if (ip[0] === j && wip)
           isFreeToMove = true;
-        else if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
+        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
           enemyFound[3] = true;
         else if (checkp.alive)
           isFreeToMove = false;
       }
+    }
+
+    if (isFreeToMove && first) {
+      // TODO: check if the move really is ok (will there be check?)
+      // TODO: Check if can attack the rook first, then king
+      let isOk = true;
+      let foundp = false;
+      const ps = this.chess.pieces.filter(x => x.color !== p.color);
+      for (var i = 0; i < ps.length; i++) {
+        // if ps[i] can check king when p moves to pos, isOk = true
+        let pam = ps[i].availableMoves();
+
+        for (var j = 0; j < pam.length; j++) {
+          let pamp = this.chess.getPieceAtPos(pam[j].newPos);
+
+          if (!foundp) {
+            if (pamp.id === p.id) foundp = true;
+          }
+          else {
+            if (pamp.alive && pamp.piece === PieceType.king && pamp.color === p.color) {
+
+              switch (ps[i].piece) {
+                case PieceType.pawn:
+                  pam[j].legal = this.testPawnMove(ps[i], pamp, pos);
+                  break;
+                case PieceType.rook:
+                  pam[j].legal = this.testRookMove(ps[i], pos, enemyFound, false);
+                  break;
+                case PieceType.bishop:
+                  pam[j].legal = this.testBishopMove(ps[i], pos, enemyFound);
+                  break;
+                case PieceType.knight:
+                  pam[j].legal = this.testKnightMove(ps[i], pamp, pos);
+                  break;
+                case PieceType.queen:
+                  pam[j].legal = this.testQueenMove(ps[i], pos, enemyFound);
+                  break;
+                case PieceType.king:
+                  pam[j].legal = this.testKingMove(ps[i], pamp, pos);
+                  break;
+                default: break;
+              }
+
+              if (pam[j].legal) {
+                console.log(`${this.getPieceLetter(ps[i].piece)}${ps[i].pos} can attack`, pamp);
+                isOk = false;
+              }
+
+            }
+          }
+        }
+      }
+      console.log(`After searching ps (length = ${ps.length}), ${pos} isOk,`, isOk);
+      isFreeToMove = isOk;
     }
 
     return isFreeToMove;
@@ -678,12 +726,8 @@ export class ChessComponent implements OnInit {
           case PieceType.pawn:
             return this.testPawnMove(p, pamp, pamp.pos);
           case PieceType.rook:
-            //if (ignorePos[0] !== 10)
-            //  this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
             return this.testRookMove(p, pamp.pos, [false, false, false, false]);
           case PieceType.bishop:
-            //if (ignorePos[0] !== 10)
-            //  this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
             return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
           case PieceType.knight:
             return this.testKnightMove(p, pamp, pamp.pos);
@@ -738,7 +782,7 @@ export class ChessComponent implements OnInit {
     this.check = false;
     this.notationIndex = 1;
 
-    //this.chessService.resetNotation();
+    //this.chessService.removeNotation(this.newMoves.length);
 
     for (var i = 0; i < this.chess.size[0]; i++) {
       this.chess.board[i] = [];
@@ -1015,8 +1059,7 @@ export class ChessComponent implements OnInit {
   }
 
   posIsEqual(p1: number[], p2: number[]): boolean {
-    let res = p1[0] === p2[0] && p1[1] === p2[1] ? true : false;
-    return res;
+    return p1[0] === p2[0] && p1[1] === p2[1] ? true : false;
   }
 
   getXLetter(y: number, reverse: boolean = false): string {
