@@ -33,7 +33,6 @@ export class ChessService {
 
   addNotation(n: string): Observable<string[]> {
     const url = `${this.chessUrl}/addnotation`;
-    console.log('Still trying to save move', n);
     return this.http.post<string[]>(url, `{ \"value\": \"${n}\" }`, this.httpOptions).pipe();
   }
 
@@ -47,20 +46,9 @@ export class ChessService {
     return this.http.get<number>(url).pipe();
   }
 
-  resetNotation() {
-    const url = `${this.chessUrl}/resetnotation/0`;
-    console.log('Trying to reset the board');
-    this.http.post<string[]>(url, this.httpOptions).pipe(
-      tap(_ => console.log('Reset Successful')),
-      catchError(this.handleError<string[]>('resetNotation', [])),
-    );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(operation, error);
-
-      return of(result as T);
-    };
-  }
+  //async resetNotation() {
+  //  const url = `${this.chessUrl}/resetnotation/0`;
+  //  console.log('Trying to reset the board');
+  //  await lastValueFrom(this.http.post<string[]>(url, this.httpOptions));
+  //}
 }

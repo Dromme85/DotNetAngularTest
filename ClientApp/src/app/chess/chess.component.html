@@ -23,7 +23,7 @@
       </ul>
     </div>
   </div>
-  <table style="font-size: calc(100vh / ({{chess.size[0]}} * {{chess.size[2]}}))">
+  <table style="font-size: calc(100vh / ({{chess.size[0]}} * {{chess.size[2]}}))" oncontextmenu="return false;">
     <tr *ngFor="let rows of chess.board; index as y" class="chess-board">
       <td *ngFor="let slot of rows; index as x" class="cell" (click)="cellClick(x, y)">
         <div class="cell-content" *ngIf="chess.getPieceAtXY(x, y) as p">
@@ -57,7 +57,7 @@
       <i class="fa-solid fa-chess-{{chess.getPieceName(p.piece)}} light"></i>
     </div>
   </div>
-  <div class="info" *ngIf="oldSelected.alive && debug" (click)="test()">
+  <div class="info" *ngIf="oldSelected.alive && debug">
     <div class="info-box">
       Selected
       <div class="d-flex justify-content-evenly">

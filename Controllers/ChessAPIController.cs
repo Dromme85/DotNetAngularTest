@@ -36,6 +36,10 @@ public class ChessAPIController : ControllerBase
 		}
 	}
 
+	/// <summary>
+	/// Returns an array of notations from the current game
+	/// </summary>
+	/// <returns>Array of notations from the current game</returns>
 	[HttpGet]
 	[Route("getnotation")]
 	public string[] Get()
@@ -47,6 +51,11 @@ public class ChessAPIController : ControllerBase
 		return res.Moves;
 	}
 
+	/// <summary>
+	/// Adds a single notation to the list of notations of the current game
+	/// </summary>
+	/// <param name="value">A string representing the new notation</param>
+	/// <returns>Array of all notations from current game</returns>
 	[HttpPost]
 	[Route("addnotation")]
 	public string[] Add([FromBody] JsonObject value)
@@ -61,19 +70,10 @@ public class ChessAPIController : ControllerBase
 		return res.Moves.Reverse().ToArray();
 	}
 
-	[HttpDelete]
-	[Route("removenotation/{value}")]
-	public void Delete(int value)
-	{
-		var res = Notations[CurrentIndex];
-
-		var tl = res.Moves.ToList();
-		tl.RemoveRange(tl.Count - value, value);
-		res.Moves = tl.ToArray();
-
-		//return res.Moves.Reverse().ToArray();
-	}
-
+	/// <summary>
+	/// Starts a new game and returns the index of the game
+	/// </summary>
+	/// <returns>New game index</returns>
 	[HttpGet]
 	[Route("newnotation")]
 	public int New()
@@ -84,16 +84,40 @@ public class ChessAPIController : ControllerBase
 		return CurrentIndex;
 	}
 
-	[HttpPost]
-	[Route("resetnotation/{index}")]
-	public string[] ResetNotation(int index)
+	/// <summary>
+	/// Removes at least one move from the current game
+	/// </summary>
+	/// <param name="value">Number of moves to remove</param>
+	[HttpDelete]
+	[Route("removenotation/{value}")]
+	public void Delete(int value)
 	{
-		if (Notations.Any(x => x.Id == index))
-			Notations.RemoveAt(index);
+		var res = Notations[CurrentIndex];
 
-		if (CurrentIndex == index)
-			CurrentIndex = 0;
+		if (res.Moves.Length < value) value = res.Moves.Length;
 
-		return Notations[CurrentIndex].Moves.Reverse().ToArray();
+		var tl = res.Moves.ToList();
+		tl.RemoveRange(tl.Count - value, value);
+		res.Moves = tl.ToArray();
+
+		//return res.Moves.Reverse().ToArray();
 	}
+
+	/// <summary>
+	/// Removes the game with the selected index
+	/// </summary>
+	/// <param name="index">Game to be removed</param>
+	/// <returns>Array of moves from game with CurrentIndex</returns>
+	//[HttpDelete]
+	//[Route("resetnotation/{index}")]
+	//public string[] Reset(int index)
+	//{
+	//	if (Notations.Any(x => x.Id == index))
+	//		Notations.RemoveAt(index);
+
+	//	if (CurrentIndex == index)
+	//		CurrentIndex = 0;
+
+	//	return Notations[CurrentIndex].Moves.Reverse().ToArray();
+	//}
 }

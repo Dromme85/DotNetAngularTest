@@ -53,7 +53,6 @@ export class ChessComponent implements OnInit {
   }
 
   saveNotation(n: string) {
-    console.log('Trying to save moves.');
     this.chessService.addNotation(n)
       .subscribe(data => this.moves = data);
   }
@@ -190,11 +189,6 @@ export class ChessComponent implements OnInit {
       this.oldSelected.selected = false;
     }
 
-  }
-
-  test() {
-    console.log(this.chess.pieces);
-    //console.log(this.chess.board);
   }
 
   selectPiece(p?: ChessPiece) {
@@ -361,13 +355,9 @@ export class ChessComponent implements OnInit {
           enemyFound[0] = true;
         else if (checkp.alive) {
           isFreeToMove = false;
-        console.log('nw checkp', checkp);
         }
         if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
           isFreeToMove = true;
-
-        if (this.posIsEqual(checkp.pos, [2, 4]))
-          console.log('why is me false?')
       }
     }
     // North east
@@ -381,10 +371,9 @@ export class ChessComponent implements OnInit {
           enemyFound[1] = true;
         else if (checkp.alive) {
           isFreeToMove = false;
-        console.log('ne checkp', checkp);
         }
         if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
-            isFreeToMove = true;
+          isFreeToMove = true;
       }
     }
     // South east
@@ -396,7 +385,6 @@ export class ChessComponent implements OnInit {
           enemyFound[2] = true;
         else if (checkp.alive) {
           isFreeToMove = false;
-        console.log('se checkp', checkp);
         }
         if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
           isFreeToMove = true;
@@ -413,10 +401,9 @@ export class ChessComponent implements OnInit {
           enemyFound[3] = true;
         else if (checkp.alive) {
           isFreeToMove = false;
-        console.log('sw checkp', checkp);
         }
         if (this.posIsEqual(ip, checkp.pos) && wip && checkp.alive)
-            isFreeToMove = true;
+          isFreeToMove = true;
       }
     }
 
@@ -688,18 +675,22 @@ export class ChessComponent implements OnInit {
       if (pamp.piece === PieceType.king && pamp.color !== p.color) {
         // test the position
         switch (p.piece) {
-          case PieceType.pawn: return this.testPawnMove(p, pamp, pamp.pos);
+          case PieceType.pawn:
+            return this.testPawnMove(p, pamp, pamp.pos);
           case PieceType.rook:
-            if (ignorePos[0] !== 10)
-              this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
+            //if (ignorePos[0] !== 10)
+            //  this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
             return this.testRookMove(p, pamp.pos, [false, false, false, false]);
           case PieceType.bishop:
-            if (ignorePos[0] !== 10)
-              this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
+            //if (ignorePos[0] !== 10)
+            //  this.testRookMove(p, pamp.pos, [false, false, false, false], ignorePos);
             return this.testBishopMove(p, pamp.pos, [false, false, false, false]);
-          case PieceType.knight: return this.testKnightMove(p, pamp, pamp.pos);
-          case PieceType.queen: return this.testQueenMove(p, pamp.pos, [false, false, false, false, false, false, false, false]);
-          case PieceType.king: return this.testKingMove(p as PieceKing, pamp, pamp.pos);
+          case PieceType.knight:
+            return this.testKnightMove(p, pamp, pamp.pos);
+          case PieceType.queen:
+            return this.testQueenMove(p, pamp.pos, [false, false, false, false, false, false, false, false]);
+          case PieceType.king:
+            return this.testKingMove(p as PieceKing, pamp, pamp.pos);
         }
       }
     }
@@ -747,7 +738,7 @@ export class ChessComponent implements OnInit {
     this.check = false;
     this.notationIndex = 1;
 
-    this.chessService.resetNotation();
+    //this.chessService.resetNotation();
 
     for (var i = 0; i < this.chess.size[0]; i++) {
       this.chess.board[i] = [];
