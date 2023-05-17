@@ -888,6 +888,10 @@ export class ChessComponent implements OnInit {
               this.state = StateType.castle;
               //console.log('Castling found', n[j]);
             }
+            // TODO: Look for check mate (0-1 for dark win and 1-0 for light win)
+            else if (n[j] === '0-1' || n[j] === '1-0') {
+              this.state = StateType.mate;
+            }
             else {
 
             }
