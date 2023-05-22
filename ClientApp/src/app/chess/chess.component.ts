@@ -278,18 +278,18 @@ export class ChessComponent implements OnInit {
     return isFreeToMove;
   }
 
-  testRookMove(p: ChessPiece, pos: number[], enemyFound: boolean[]/*, ip: number[] = [10, 0]*/, first: boolean = true): boolean {
+  testRookMove(p: ChessPiece, pos: number[], enemyFound: boolean[], ip: number[] = [10, 0]): boolean {
 
     let isFreeToMove = true;
-    //let wip = ip[0] === 10 ? false : true;
+    let wip = ip[0] === 10 ? false : true;
 
     // North
     if (p.pos[1] > pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] - 1; j >= pos[1]; j--) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        /*if (ip[1] === j && wip)
-          isFreeToMove = true;
-        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
+        if (ip[1] === j && wip)
+          isFreeToMove = false;
+        else if (checkp.alive && checkp.color !== p.color && !enemyFound[0])
           enemyFound[0] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -299,9 +299,9 @@ export class ChessComponent implements OnInit {
     else if (p.pos[0] < pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] + 1; j <= pos[0]; j++) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        /*if (ip[0] === j && wip)
-          isFreeToMove = true;
-        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
+        if (ip[0] === j && wip)
+          isFreeToMove = false;
+        else if (checkp.alive && checkp.color !== p.color && !enemyFound[1])
           enemyFound[1] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -311,9 +311,9 @@ export class ChessComponent implements OnInit {
     else if (p.pos[1] < pos[1] && p.pos[0] === pos[0]) {
       for (var j = p.pos[1] + 1; j <= pos[1]; j++) {
         var checkp = this.chess.getPieceAtXY(p.pos[0], j);
-        /*if (ip[1] === j && wip)
-          isFreeToMove = true;
-        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
+        if (ip[1] === j && wip)
+          isFreeToMove = false;
+        else if (checkp.alive && checkp.color !== p.color && !enemyFound[2])
           enemyFound[2] = true;
         else if (checkp.alive)
           isFreeToMove = false;
@@ -323,16 +323,16 @@ export class ChessComponent implements OnInit {
     else if (p.pos[0] > pos[0] && p.pos[1] === pos[1]) {
       for (var j = p.pos[0] - 1; j >= pos[0]; j--) {
         var checkp = this.chess.getPieceAtXY(j, p.pos[1]);
-        /*if (ip[0] === j && wip)
-          isFreeToMove = true;
-        else*/ if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
+        if (ip[0] === j && wip)
+          isFreeToMove = false;
+        else if (checkp.alive && checkp.color !== p.color && !enemyFound[3])
           enemyFound[3] = true;
         else if (checkp.alive)
           isFreeToMove = false;
       }
     }
 
-    if (isFreeToMove && first) {
+    if (isFreeToMove && !wip) {
       // TODO: check if the move really is ok (will there be check?)
       // TODO: Check if can attack the rook first, then king
       let isOk = true;
@@ -356,7 +356,7 @@ export class ChessComponent implements OnInit {
                   pam[j].legal = this.testPawnMove(ps[i], pamp, pos);
                   break;
                 case PieceType.rook:
-                  pam[j].legal = this.testRookMove(ps[i], pos, enemyFound, false);
+                  pam[j].legal = this.testRookMove(ps[i], pos, enemyFound, pos);
                   break;
                 case PieceType.bishop:
                   pam[j].legal = this.testBishopMove(ps[i], pos, enemyFound);
@@ -375,7 +375,10 @@ export class ChessComponent implements OnInit {
 
               if (pam[j].legal) {
                 console.log(`${this.getPieceLetter(ps[i].piece)}${ps[i].pos} can attack`, pamp);
-                isOk = false;
+                if (ps[i].color !== p.color && this.posIsEqual(ps[i].pos, pos))
+                  isOk = true;
+                else
+                  isOk = false;
               }
 
             }
