@@ -23,6 +23,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { CreditCardComponent } from './credit-card/credit-card.component';
 import { CreditCardPipe } from './credit-card/credit-card.pipe';
 import { CreditCardDirective } from './credit-card/credit-card.directive';
+import { ChessComponent } from './chess/chess.component';
 import { AboutComponent } from './about/about.component';
 
 @NgModule({
@@ -43,7 +44,8 @@ import { AboutComponent } from './about/about.component';
     CreditCardComponent,
     CreditCardPipe,
     CreditCardDirective,
-    AboutComponent
+    ChessComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -63,6 +65,7 @@ import { AboutComponent } from './about/about.component';
       { path: 'search', component: HeroSearchComponent },
       { path: 'treegrid', component: TreeGridComponent },
       { path: 'card', component: CreditCardComponent },
+      { path: 'chess', component: ChessComponent },
       { path: 'about', component: AboutComponent },
     ]),
   ],

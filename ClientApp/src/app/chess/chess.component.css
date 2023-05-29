@@ -1,0 +1,205 @@
+.chess-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5em;
+  height: 100vh;
+  overflow: hidden;
+}
+
+  .chess-body .chess-left {
+    position: fixed;
+    display: block;
+    top: 4rem;
+    left: 10rem;
+  }
+
+    .chess-body .chess-left .chess-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-color);
+    }
+
+    .chess-body .chess-left .chess-info {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 1rem;
+    }
+
+      .chess-body .chess-left .chess-info i {
+        font-size: 3rem;
+      }
+
+      .chess-body .chess-left .chess-info:has(ul) {
+        background: var(--primary-color-light);
+        overflow: auto;
+        height: calc(100vh - 18rem);
+      }
+        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar {
+          width: .3rem;
+        }
+        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: .15rem;
+        }
+
+      .chess-body .chess-left .chess-info ul {
+        list-style: none;
+        padding: .5rem;
+        color: var(--text-color);
+        min-width: 12rem;
+      }
+
+      .chess-body .chess-left .chess-info ul li.active {
+        font-weight: 500;
+      }
+
+    .chess-body .chess-left .notation-arrows {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      left: -1rem;
+      top: 4rem;
+      height: 0;
+      width: 0;
+    }
+
+      .chess-body .chess-left .notation-arrows i {
+        cursor: pointer;
+      }
+
+        .chess-body .chess-left .notation-arrows i.disabled {
+          cursor: default;
+          color: #8888;
+        }
+
+  .chess-body .chess-dead {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 40vh;
+  }
+    .chess-body .chess-dead i {
+      font-size: 1.5em;
+    }
+
+    .chess-body .chess-dead.light {
+      transform: translate(-50vh, 50%);
+      flex-direction: column;
+    }
+
+    .chess-body .chess-dead.dark {
+      transform: translate(50vh, -50%);
+      flex-direction: column-reverse;
+    }
+
+  .chess-body table {
+    table-layout: fixed;
+    width: auto;
+    height: auto;
+    outline: 1em outset #9c5613;
+    background: url("bg.png");
+    background-size: cover;
+  }
+
+th, td {
+  overflow: hidden;
+}
+
+.chess-body tr:nth-child(odd) td:nth-child(even) {
+  background: var(--board-dark-color);
+}
+
+.chess-body tr:nth-child(even) td:nth-child(odd) {
+  background: var(--board-dark-color);
+}
+
+.chess-board {
+  background: var(--board-light-color);
+}
+
+.cell {
+  text-align: center;
+}
+
+  .cell:hover {
+    outline: solid .2em #ffd80070;
+    outline-offset: -.2em;
+    z-index: 0;
+  }
+
+  .cell .cell-content {
+    width: 2em;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+    .cell .cell-content:has(.selected) {
+      outline: solid .2em #00ff0070;
+      outline-offset: -.3em;
+    }
+    .cell .cell-content:has(.move) {
+      outline: solid .2em #00ff0070;
+      outline-offset: -.5em;
+    }
+
+i.light {
+  color: var(--piece-light-color);
+  text-shadow: 0 0 .07em #fffdf0;
+}
+
+i.dark {
+  color: var(--piece-dark-color);
+  text-shadow: 0 0 .07em #808080;
+}
+
+@supports (background-clip: text) {
+  i.light {
+    background-image: linear-gradient(110deg, var(--piece-light-color), var(--piece-light-color), #ddd);
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 .03em #808080);
+    text-shadow: none;
+  }
+
+  i.dark {
+    background-image: linear-gradient(110deg, var(--piece-dark-color), var(--piece-dark-color), #857000);
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 .03em #ccc);
+    text-shadow: none;
+  }
+}
+
+
+.info {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  top: 25px;
+  right: 25px;
+}
+
+.info-box {
+  display: inline-block;
+  width: 160px;
+  height: auto;
+  background-color: #ffffffdd;
+  border-radius: 4px;
+  z-index: 2;
+  padding: 10px;
+  margin-bottom: .5rem;
+  box-shadow: 0 4px 8px 0 #00000033, 0 6px 20px 0 #00000044;
+}
+
+.btn-area {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}

@@ -46,6 +46,12 @@
           </a>
         </li>
         <li class="nav-link">
+          <a [routerLink]="['/chess']" [routerLinkActive]="['link-active']" (click)="collapse()">
+            <i class="fa-solid fa-chess icon"></i>
+            <span class="text nav-text">Chess</span>
+          </a>
+        </li>
+        <li class="nav-link">
           <a [routerLink]="['/treegrid']" [routerLinkActive]="['link-active']" (click)="collapse()">
             <i class="fa-solid fa-tree icon"></i>
             <span class="text nav-text">Tree Grid</span>
