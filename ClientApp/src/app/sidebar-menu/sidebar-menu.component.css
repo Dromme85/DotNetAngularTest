@@ -215,7 +215,7 @@ header .image-text .header-text {
   overflow-y: scroll;
   direction: rtl;
   width: calc(100% + .6rem);
-  scrollbar-color: #888;
+  scrollbar-color: #888 #0000;
   scrollbar-width: thin;
 }
 

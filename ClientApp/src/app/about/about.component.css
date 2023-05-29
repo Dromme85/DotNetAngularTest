@@ -27,7 +27,7 @@
   padding: 1rem;
   direction: rtl;
   background: var(--backdrop-shade-color);
-  scrollbar-color: #888;
+  scrollbar-color: #888 #0000;
   scrollbar-width: thin;
 }
 
