@@ -181,8 +181,10 @@
   }
 
   .sidebar .search-box {
+    direction: ltr;
     border-radius: 6px;
     background: var(--primary-color-light);
+    margin-left: .3rem;
   }
 
 .search-box input {
@@ -206,6 +208,28 @@ header .image-text .header-text {
 .header-text .profession {
   margin-top: -2px;
 }
+
+.menu-bar .menu {
+  position: relative;
+  transform: translateX(-0.6rem);
+  overflow-y: scroll;
+  direction: rtl;
+  width: calc(100% + .6rem);
+}
+
+  .menu-bar .menu::-webkit-scrollbar {
+    width: .3rem;
+  }
+
+  .menu-bar .menu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: .15rem;
+  }
+
+  .menu-bar .menu .menu-links {
+    direction: ltr;
+    margin-left: .3rem;
+  }
 
 .menu-bar .mode {
   position: relative;

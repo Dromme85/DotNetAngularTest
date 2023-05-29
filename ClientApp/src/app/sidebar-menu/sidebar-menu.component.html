@@ -28,49 +28,49 @@
       </div>
       <ul class="menu-links">
         <li class="nav-link">
-          <a [routerLink]="['/']" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }" (click)="collapse()">
+          <a [routerLink]="['/']" [routerLinkActive]="['link-active']" [routerLinkActiveOptions]="{ exact: true }" (click)="collapse()" title="Home">
             <i class="fa-solid fa-house-chimney icon"></i>
             <span class="text nav-text">Home</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/hero']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/hero']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Tour of Heroes">
             <i class="fa-solid fa-mask icon"></i>
             <span class="text nav-text">Hero</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/card']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/card']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Credit Card">
             <i class="fa-solid fa-credit-card icon"></i>
             <span class="text nav-text">Credit Card</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/chess']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/chess']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Chæsck">
             <i class="fa-solid fa-chess icon"></i>
-            <span class="text nav-text">Chess</span>
+            <span class="text nav-text">Chæsck</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/treegrid']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/treegrid']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Tree Grid">
             <i class="fa-solid fa-tree icon"></i>
             <span class="text nav-text">Tree Grid</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/stats']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/stats']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Stats">
             <i class="fa-solid fa-chart-pie icon"></i>
             <span class="text nav-text">Stats</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/counter']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/counter']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Messages">
             <i class="fa-solid fa-hashtag icon"></i>
-            <span class="text nav-text">Counter</span>
+            <span class="text nav-text">Messages</span>
           </a>
         </li>
         <li class="nav-link">
-          <a [routerLink]="['/weather']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/weather']" [routerLinkActive]="['link-active']" (click)="collapse()" title="Weather">
             <i class="fa-solid fa-cloud-sun icon"></i>
             <span class="text nav-text">Weather</span>
           </a>
@@ -81,7 +81,7 @@
     <div class="bottom-content">
       <ul>
         <li class="nav-link">
-          <a [routerLink]="['/about']" [routerLinkActive]="['link-active']" (click)="collapse()">
+          <a [routerLink]="['/about']" [routerLinkActive]="['link-active']" (click)="collapse()" title="About">
             <i class="fa-solid fa-circle-info icon"></i>
             <span class="text nav-text">About</span>
           </a>
@@ -93,7 +93,7 @@
           </div>
           <span class="mode-text text">{{getDarkModeText()}}</span>
 
-          <div class="toggle-switch" (click)="toggleDarkMode()">
+          <div class="toggle-switch" (click)="toggleDarkMode()" title="Dark Mode">
             <span class="switch"></span>
           </div>
         </li>
