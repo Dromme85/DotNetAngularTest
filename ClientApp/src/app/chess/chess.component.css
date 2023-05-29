@@ -31,27 +31,30 @@
         font-size: 3rem;
       }
 
-      .chess-body .chess-left .chess-info:has(ul) {
-        background: var(--primary-color-light);
-        overflow: auto;
-        height: calc(100vh - 18rem);
+    .chess-body .chess-left .chess-note {
+      background: var(--primary-color-light);
+      overflow-y: auto;
+      overflow-x: hidden;
+      height: calc(100vh - 18rem);
+      scrollbar-color: #888;
+      scrollbar-width: thin;
+    }
+      .chess-body .chess-left .chess-note::-webkit-scrollbar {
+        width: .3rem;
       }
-        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar {
-          width: .3rem;
-        }
-        .chess-body .chess-left .chess-info:has(ul)::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: .15rem;
-        }
+      .chess-body .chess-left .chess-note::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: .15rem;
+      }
 
-      .chess-body .chess-left .chess-info ul {
+      .chess-body .chess-left .chess-note ul {
         list-style: none;
         padding: .5rem;
         color: var(--text-color);
         min-width: 12rem;
       }
 
-      .chess-body .chess-left .chess-info ul li.active {
+      .chess-body .chess-left .chess-note li.active {
         font-weight: 500;
       }
 

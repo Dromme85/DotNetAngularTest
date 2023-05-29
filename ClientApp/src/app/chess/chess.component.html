@@ -16,7 +16,7 @@
       <i class="fa-solid fa-caret-down mb-2" (click)="notationDown()" [ngClass]="{ disabled: notationOffset === newMoves.length - 1 }"></i>
       <i class="fa-solid fa-forward-step" style="transform: rotateZ(90deg) translateY(1px); font-size: .8rem" (click)="notationBottom()" [ngClass]="{ disabled: notationOffset === newMoves.length - 1}"></i>
     </div>
-    <div class="chess-info">
+    <div class="chess-note">
       <ul>
         <li><b>Game Notation:</b></li>
         <li *ngFor="let move of newMoves.reverse(); index as i" [ngClass]="{ active: i === notationOffset }">{{move}}</li>
