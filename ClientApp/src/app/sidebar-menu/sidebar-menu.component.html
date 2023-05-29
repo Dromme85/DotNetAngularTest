@@ -74,6 +74,12 @@
 
     <div class="bottom-content">
       <ul>
+        <li class="nav-link">
+          <a [routerLink]="['/about']" [routerLinkActive]="['link-active']" (click)="collapse()">
+            <i class="fa-solid fa-circle-info icon"></i>
+            <span class="text nav-text">About</span>
+          </a>
+        </li>
         <li class="mode">
           <div class="moon-sun">
             <i class="fa-solid fa-moon icon" [ngClass]="{ show: !isDarkMode }"></i>

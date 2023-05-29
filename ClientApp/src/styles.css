@@ -9,10 +9,11 @@
   --toggle-color: #ddd;
   --text-color: #707070;
   --text-link-color: #707070;
+  --backdrop-shade-color: #0001;
 
   /* TreeGrid Colors*/
   --tree-bg-color: #fff;
-  --hidden-tree-color: #00640010;
+  --hidden-tree-color: #0601;
 
   /* Transition */
   --tran-02: all 0.2s ease;
@@ -29,6 +30,7 @@ body:has(.main-body.dark) {
   --toggle-color: #fff;
   --text-color: #e6e6e6;
   --text-link-color: #707070;
+  --backdrop-shade-color: #fff1;
   --tree-bg-color: #ddd;
   --hidden-tree-color: #00640020;
 }

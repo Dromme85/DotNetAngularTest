@@ -1,0 +1,87 @@
+.body {
+  height: 100vh;
+  display: flex;
+}
+
+.about {
+  margin: auto;
+  width: 70%;
+  min-width: 30rem;
+  color: var(--text-color);
+}
+
+.about h1 {
+  text-align: end;
+  padding-right: 11rem;
+}
+
+  .about .container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+.container .text {
+  max-height: 50vh;
+  overflow: auto;
+  text-align: left;
+  padding: 1rem;
+  direction: rtl;
+  background: var(--backdrop-shade-color);
+}
+
+  .container .text p {
+    direction: ltr;
+  }
+
+  .container .text::-webkit-scrollbar {
+    width: .3rem;
+  }
+
+  .container .text::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: .15rem;
+  }
+
+.container .social {
+  margin-left: .5rem;
+  padding-right: 1rem;
+  padding-top: .5rem;
+  min-width: 9rem;
+  background: var(--backdrop-shade-color);
+}
+
+.social ul {
+  list-style: none;
+  text-align: end;
+}
+
+  .social ul li {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: .5rem;
+  }
+
+    .social ul li a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--text-color);
+    }
+
+      .social ul li a:hover {
+        font-weight: 600;
+      }
+
+    .social ul li i {
+      font-size: 2rem;
+      width: 2.2rem;
+    }
+
+      .social ul li i:where(.fa-linkedin) {
+        color: #0072b1;
+      }
+
+      .social ul li i:where(.fa-github) {
+        color: #171515;
+      }
