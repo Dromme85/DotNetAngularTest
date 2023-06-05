@@ -1,0 +1,171 @@
+.body {
+  height: 100vh;
+  display: flex;
+}
+
+.pie-container {
+  /*--g: .2em;
+  --s: 500px;*/
+
+  margin: auto;
+  height: 50%;
+  min-width: 30rem;
+  color: var(--text-color);
+}
+
+.pie-bg {
+  position: absolute;
+  height: calc(var(--s) + var(--g));
+  width: calc(var(--s) + var(--g));
+  transform: translate(calc(var(--g) / 2 * -1), calc(var(--g) / 2 * -1));
+  border-radius: 50%;
+  background: #000;
+}
+
+.pie {
+  font-size: calc(var(--s) / 20);
+  height: var(--s);
+  width: var(--s);
+  position: relative;
+}
+
+  .pie > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: calc(var(--s) / 2 - var(--g)) solid var(--c);
+    border-radius: 50%;
+    clip-path: polygon( calc(50% + var(--g)/2) 50%, calc(50% + var(--g)/2) 0%, 100% 0%, 100% calc(33.745% - var(--g)/2), 50% calc(50% - var(--g)/2));
+    cursor: pointer;
+  }
+
+.pie-one {
+  transform: rotate(0deg);
+  --c: #f00;
+  transition: all .2s ease;
+}
+
+  .pie-one:hover {
+    transform: rotate(0deg) translate(.5em, -.7em);
+    transition-delay: .5s;
+  }
+
+  .pie-one h1 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 500;
+    transform: translate(.8em, -1.8em);
+  }
+
+  .pie-one p {
+    color: black;
+    display: flex;
+    text-align: center;
+    transform: translate(1.5em, -9em);
+  }
+
+.pie-two {
+  transform: rotate(72deg);
+  --c: #ff0;  
+  transition: all .2s ease;
+}
+
+  .pie-two:hover {
+    transform: rotate(72deg) translate(.5em, -.7em);
+    transition-delay: .5s;
+  }
+
+  .pie-two h1 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 500;
+    transform: rotate(-72deg) translate(1.7em, .3em);
+  }
+
+  .pie-two p {
+    color: black;
+    display: flex;
+    text-align: center;
+    transform: rotate(-72deg) translate(8em, .7em);
+  }
+
+.pie-three {
+  transform: rotate(144deg);
+  --c: #0ff;
+  transition: all .2s ease;
+}
+
+  .pie-three:hover {
+    transform: rotate(144deg) translate(.5em, -.7em);
+    transition-delay: .5s;
+  }
+
+  .pie-three h1 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 500;
+    transform: rotate(-144deg) translate(.1em, 1.9em);
+  }
+
+  .pie-three p {
+    color: black;
+    display: flex;
+    text-align: center;
+    transform: rotate(-144deg) translate(0em, 9.5em);
+  }
+
+.pie-four {
+  transform: rotate(-144deg);
+  --c: #0f0;
+  transition: all .2s ease;
+}
+
+  .pie-four:hover {
+    transform: rotate(-144deg) translate(.5em, -.7em);
+    transition-delay: .5s;
+  }
+
+  .pie-four h1 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 500;
+    transform: rotate(144deg) translate(-1.8em, .75em);
+  }
+
+  .pie-four p {
+    color: black;
+    display: flex;
+    text-align: center;
+    transform: rotate(144deg) translate(-10.5em, 4.7em);
+  }
+
+.pie-five {
+  transform: rotate(-72deg);
+  --c: #fa3;
+  transition: all .2s ease;
+}
+
+  .pie-five:hover {
+    transform: rotate(-72deg) translate(.5em, -.7em);
+    transition-delay: .5s;
+  }
+
+  .pie-five h1 {
+    color: black;
+    font-size: 1.5em;
+    font-weight: 500;
+    transform: rotate(72deg) translate(-1.5em, -1.5em);
+  }
+
+  .pie-five p {
+    color: black;
+    display: flex;
+    text-align: center;
+    transform: rotate(72deg) translate(-10em, -6.5em);
+  }
+
+  #result {
+    position: relative;
+  }

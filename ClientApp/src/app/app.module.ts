@@ -25,6 +25,7 @@ import { CreditCardPipe } from './credit-card/credit-card.pipe';
 import { CreditCardDirective } from './credit-card/credit-card.directive';
 import { ChessComponent } from './chess/chess.component';
 import { AboutComponent } from './about/about.component';
+import { TestpieComponent } from './testpie/testpie.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { AboutComponent } from './about/about.component';
     CreditCardDirective,
     ChessComponent,
     AboutComponent,
+    TestpieComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -67,6 +69,7 @@ import { AboutComponent } from './about/about.component';
       { path: 'card', component: CreditCardComponent },
       { path: 'chess', component: ChessComponent },
       { path: 'about', component: AboutComponent },
+      { path: 'test', component: TestpieComponent },
     ]),
   ],
   providers: [CookieService],
