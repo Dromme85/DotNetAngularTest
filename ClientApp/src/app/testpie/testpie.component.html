@@ -1,52 +1,291 @@
 
+<div class="top-bar">
+  <div class="bar-start"></div>
+  <div class="title">FM5</div>
+  <div class="bar-end">
+    <div class="user-info">
+      <div class="mb-1"><b>John Doe, Fisk Fixer</b></div>
+      <div>VÄLDIGT HEMLIGT <br /> FÅR DELAS KONTROLLERAT <br /> INTE KLASSAT</div>
+    </div>
+    <div class="pie-container" style="--g: .20em; --s: 70px;">
+      <div class="pie-bg"></div>
+      <div class="pie-shine"></div>
+      <div class="pie">
+        <div class="pie-one">
+          <h2>M</h2>
+        </div>
+        <div class="pie-two">
+        </div>
+        <div class="pie-three">
+          <h2>5</h2>
+        </div>
+        <div class="pie-four">
+        </div>
+        <div class="pie-five">
+          <h2>F</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="nav-bar">
+  <ul>
+    <li><a href="/test">Start</a></li>
+    <li>Ny Fisk</li>
+    <li>Fisk Databas</li>
+    <li>Fisk Rapport</li>
+    <li>Verktyg & Spön</li>
+    <li>Exempel & Bilder</li>
+    <li>FAQ & Hjälp</li>
+  </ul>
+</div>
+
 <div class="body">
   <div class="pie-container" style="--g: .15em; --s: 200px;">
     <div class="pie-bg"></div>
-    <div class="pie-overlay"></div>
     <div class="pie">
-      <div class="pie-one" onclick="document.getElementById('result').innerHTML = 'Red';">
+      <a class="pie-one" onclick="document.getElementById('d-one').showModal();">
         <h1>1</h1>
-        <p>Risk Identification</p>
-      </div>
-      <div class="pie-two" onclick="document.getElementById('result').innerHTML = 'Yellow';">
+        <p>Fisk Identification</p>
+      </a>
+      <a class="pie-two" onclick="document.getElementById('d-two').showModal();">
         <h1>2</h1>
-        <p>Risk Analysis</p>
-      </div>
-      <div class="pie-three" onclick="document.getElementById('result').innerHTML = 'Cyan';">
+        <p>Fisk Analysis</p>
+      </a>
+      <a class="pie-three" onclick="document.getElementById('d-three').showModal()">
         <h1>3</h1>
-        <p>Risk Evaluation</p>
-      </div>
-      <div class="pie-four" onclick="document.getElementById('result').innerHTML = 'Green';">
+        <p>Fisk Evaluation</p>
+      </a>
+      <a class="pie-four" onclick="document.getElementById('d-four').showModal()">
         <h1>4</h1>
-        <p>Risk Treatment</p>
-      </div>
-      <div class="pie-five" onclick="document.getElementById('result').innerHTML = 'Orange';">
+        <p>Fisk Treatment</p>
+      </a>
+      <a class="pie-five" onclick="document.getElementById('d-five').showModal()">
         <h1>5</h1>
         <p>Monitoring & Review</p>
-      </div>
+      </a>
     </div>
-    <div id="result"></div>
   </div>
 
 
-  <div class="pie-container" style="--g: .20em; --s: 70px;">
-    <div class="pie-bg"></div>
-    <div class="pie-shine"></div>
-    <div class="pie">
-      <div class="pie-one">
-        <h2>M</h2>
-      </div>
-      <div class="pie-two">
-      </div>
-      <div class="pie-three">
-        <h2>5</h2>
-      </div>
-      <div class="pie-four">
-      </div>
-      <div class="pie-five">
-        <h2>R</h2>
-      </div>
-    </div>
-    <div id="result"></div>
-  </div>
 </div>
+
+<dialog id="d-one">
+  <button type="button" onclick="document.getElementById('d-one').close();">&times;</button>
+  <div class="d-text">
+    <div class="me-3">
+      <h3>Fisk Identification</h3>
+      <ul>
+        <li>Tincidunt integer eu augue augue</li>
+        <li>luctus placerat scelerisque euismod</li>
+        <li>aliquam sit amet justo nunc tempor</li>
+        <li>iaculis eu lacus nunc mi elit</li>
+        <li>vehicula ut laoreet ac</li>
+        <li>metus vel nunc elit dolor</li>
+      </ul>
+    </div>
+
+    <div class="pie-container" style="--g: .15em; --s: 200px;">
+      <div class="pie-bg"></div>
+      <div class="pie-overlay"></div>
+      <div class="pie">
+        <div class="pie-one active">
+          <h1>1</h1>
+          <p>Fisk Identification</p>
+        </div>
+        <div class="pie-two">
+          <h1>2</h1>
+          <p>Fisk Analysis</p>
+        </div>
+        <div class="pie-three">
+          <h1>3</h1>
+          <p>Fisk Evaluation</p>
+        </div>
+        <div class="pie-four">
+          <h1>4</h1>
+          <p>Fisk Treatment</p>
+        </div>
+        <div class="pie-five">
+          <h1>5</h1>
+          <p>Monitoring & Review</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="d-two">
+  <button type="button" onclick="document.getElementById('d-two').close();">&times;</button>
+  <div class="d-text">
+    <div class="me-3">
+      <h3>Fisk Analysis</h3>
+      <ul>
+        <li>Tincidunt integer eu augue augue</li>
+        <li>luctus placerat scelerisque euismod</li>
+        <li>aliquam sit amet justo nunc tempor</li>
+        <li>iaculis eu lacus nunc mi elit</li>
+        <li>vehicula ut laoreet ac</li>
+        <li>metus vel nunc elit dolor</li>
+      </ul>
+    </div>
+
+    <div class="pie-container" style="--g: .15em; --s: 200px;">
+      <div class="pie-bg"></div>
+      <div class="pie-overlay"></div>
+      <div class="pie">
+        <div class="pie-one">
+          <h1>1</h1>
+          <p>Fisk Identification</p>
+        </div>
+        <div class="pie-two active">
+          <h1>2</h1>
+          <p>Fisk Analysis</p>
+        </div>
+        <div class="pie-three">
+          <h1>3</h1>
+          <p>Fisk Evaluation</p>
+        </div>
+        <div class="pie-four">
+          <h1>4</h1>
+          <p>Fisk Treatment</p>
+        </div>
+        <div class="pie-five">
+          <h1>5</h1>
+          <p>Monitoring & Review</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="d-three">
+  <button type="button" onclick="document.getElementById('d-three').close();">&times;</button>
+  <div class="d-text">
+    <div class="me-3">
+      <h3>Fisk Evaluation</h3>
+      <ul>
+        <li>Tincidunt integer eu augue augue</li>
+        <li>luctus placerat scelerisque euismod</li>
+        <li>aliquam sit amet justo nunc tempor</li>
+        <li>iaculis eu lacus nunc mi elit</li>
+        <li>vehicula ut laoreet ac</li>
+        <li>metus vel nunc elit dolor</li>
+      </ul>
+    </div>
+
+    <div class="pie-container" style="--g: .15em; --s: 200px;">
+      <div class="pie-bg"></div>
+      <div class="pie-overlay"></div>
+      <div class="pie">
+        <div class="pie-one">
+          <h1>1</h1>
+          <p>Fisk Identification</p>
+        </div>
+        <div class="pie-two">
+          <h1>2</h1>
+          <p>Fisk Analysis</p>
+        </div>
+        <div class="pie-three active">
+          <h1>3</h1>
+          <p>Fisk Evaluation</p>
+        </div>
+        <div class="pie-four">
+          <h1>4</h1>
+          <p>Fisk Treatment</p>
+        </div>
+        <div class="pie-five">
+          <h1>5</h1>
+          <p>Monitoring & Review</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="d-four">
+  <button type="button" onclick="document.getElementById('d-four').close();">&times;</button>
+  <div class="d-text">
+    <div class="me-3">
+      <h3>Fisk Treatment</h3>
+      <ul>
+        <li>Tincidunt integer eu augue augue</li>
+        <li>luctus placerat scelerisque euismod</li>
+        <li>aliquam sit amet justo nunc tempor</li>
+        <li>iaculis eu lacus nunc mi elit</li>
+        <li>vehicula ut laoreet ac</li>
+        <li>metus vel nunc elit dolor</li>
+      </ul>
+    </div>
+
+    <div class="pie-container" style="--g: .15em; --s: 200px;">
+      <div class="pie-bg"></div>
+      <div class="pie-overlay"></div>
+      <div class="pie">
+        <div class="pie-one">
+          <h1>1</h1>
+          <p>Fisk Identification</p>
+        </div>
+        <div class="pie-two">
+          <h1>2</h1>
+          <p>Fisk Analysis</p>
+        </div>
+        <div class="pie-three">
+          <h1>3</h1>
+          <p>Fisk Evaluation</p>
+        </div>
+        <div class="pie-four active">
+          <h1>4</h1>
+          <p>Fisk Treatment</p>
+        </div>
+        <div class="pie-five">
+          <h1>5</h1>
+          <p>Monitoring & Review</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="d-five">
+  <button type="button" onclick="document.getElementById('d-five').close();">&times;</button>
+  <div class="d-text">
+    <div class="me-3">
+      <h3>Monitoring & Review</h3>
+      <ul>
+        <li>Tincidunt integer eu augue augue</li>
+        <li>luctus placerat scelerisque euismod</li>
+        <li>aliquam sit amet justo nunc tempor</li>
+        <li>iaculis eu lacus nunc mi elit</li>
+        <li>vehicula ut laoreet ac</li>
+        <li>metus vel nunc elit dolor</li>
+      </ul>
+    </div>
+
+    <div class="pie-container" style="--g: .15em; --s: 200px;">
+      <div class="pie-bg"></div>
+      <div class="pie-overlay"></div>
+      <div class="pie">
+        <div class="pie-one">
+          <h1>1</h1>
+          <p>Fisk Identification</p>
+        </div>
+        <div class="pie-two">
+          <h1>2</h1>
+          <p>Fisk Analysis</p>
+        </div>
+        <div class="pie-three">
+          <h1>3</h1>
+          <p>Fisk Evaluation</p>
+        </div>
+        <div class="pie-four">
+          <h1>4</h1>
+          <p>Fisk Treatment</p>
+        </div>
+        <div class="pie-five active">
+          <h1>5</h1>
+          <p>Monitoring & Review</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
